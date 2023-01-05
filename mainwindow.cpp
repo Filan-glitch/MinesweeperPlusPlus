@@ -120,20 +120,20 @@ void MainWindow::newEasyRound() {
         }
         CustomPushButton* button = &(*m_buttonList)[i];
         connect(button->button(), SIGNAL(clicked(bool)), (*m_buttonList)[i].button(), SLOT(setEnabled(bool)));
-        connect(button->button(), &QPushButton::customContextMenuRequested,
-                [button]() {
-                    // Ändern Sie das Icon des QPushButton
+
+
+        connect(button->button(), &QPushButton::customContextMenuRequested, [button]() {
+                    qDebug() << "Button: " << button->button()->objectName() << " icon: " << button->icon() << " role: " << button->role();
+                    MainWindow* window = reinterpret_cast<MainWindow*>(button->button()->parent()->parent()->parent());
                     if(button->icon() == CustomPushButton::FLAG) {
                         button->setIcon(button->role());
-                    } else {
+                        window->ui->lcdNumber->display(window->ui->lcdNumber->intValue() + 1);
+                    } else if(window->ui->lcdNumber->intValue() > 0){
                        button->setIcon(CustomPushButton::FLAG);
-
+                       window->ui->lcdNumber->display(window->ui->lcdNumber->intValue() - 1);
                     }
-
                 });
     }
-
-
 
     //Random Bomb Generation
     std::default_random_engine generator(rand());
@@ -154,6 +154,8 @@ void MainWindow::newEasyRound() {
         }
     }
 
+    ui->lcdNumber->display(10);
+
 }
 
 //slot that gets accessed, when a mine gets clicked
@@ -168,12 +170,11 @@ void MainWindow::reset() {
     //Mines resetten
     for(int mineID : *m_mineIDs) {
         (*m_buttonList)[mineID].setIsMine(false);
-        disconnect(m_buttonList->at(mineID).button(), SIGNAL(clicked()), this, SLOT(bombClicked()));
     }
     //Alle Buttons resetten
     for(int i = 0; i < m_buttonList->size(); i++) {
         CustomPushButton* button = &(*m_buttonList)[i];
-        disconnect(button->button());
+        disconnect(button->button(), nullptr, nullptr, nullptr);
         button->setIcon(CustomPushButton::CLEAR);
         button->button()->setEnabled(true);
     }
@@ -185,6 +186,7 @@ void MainWindow::reset() {
     m_time->setHMS(0,0,0);
     m_buttonList->clear();
     m_mineIDs->clear();
+    ui->lcdNumber->display(0);
     ui->actionNew_Game->setEnabled(true);
     ui->actionShow_Result->setEnabled(false);
     ui->pushButton_reset->setVisible(false);
@@ -219,9 +221,9 @@ void MainWindow::about() {
 
 void MainWindow::checkWin() {
     int counter = 0;
-    for(int i = 0; i < m_buttonList->size(); i++) {
-        CustomPushButton* button = &(*m_buttonList)[i];
-        if(button->button()->isEnabled()) {
+    for(int mineID : *m_mineIDs) {
+        CustomPushButton* button = &(*m_buttonList)[mineID];
+        if(button->icon() == CustomPushButton::FLAG) {
             counter++;
         }
     }
