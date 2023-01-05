@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>minesweeper_logo.png</file>
+        <file>1.png</file>
+        <file>2.png</file>
+        <file>3.png</file>
+        <file>B.png</file>
+        <file>F.png</file>
+        <file>clear.png</file>
+        <file>unclicked.png</file>
+        <file>4.png</file>
+        <file>5.png</file>
+        <file>6.png</file>
+        <file>LICENSE</file>
+    </qresource>
+</RCC>
