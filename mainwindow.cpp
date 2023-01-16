@@ -169,7 +169,10 @@ void MainWindow::newEasyRound() {
     std::default_random_engine generator(rand());
     std::uniform_int_distribution<int> chance(0,80);
     while(m_mineIDs->size() != 10) {
-        m_mineIDs->insert(chance(generator));
+        int mineID = chance(generator);
+        //check for corners
+        if(mineID == 0 || mineID == 8 || mineID == 72 || mineID == 80) continue;
+        m_mineIDs->insert(mineID);
     }
     for(int mineID : *m_mineIDs) {
         (*m_buttonList)[mineID]->setCustomIcon(CustomPushButton::BOMB);

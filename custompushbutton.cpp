@@ -164,6 +164,7 @@ void CustomPushButton::mousePressEvent(QMouseEvent *event)
     if(event->button() == Qt::RightButton) {
         emit customContextMenuRequested(QPoint());
     } else if(event->button() == Qt::LeftButton) {
+        if(m_icon == FLAG) return;
         if(isEnabled()) {
             setEnabled(false);
         } else {
