@@ -23,11 +23,12 @@ private:
     Ui::MainWindow *ui;
     QTimer* m_timer;
     QTime* m_time;
-    QList<CustomPushButton>* m_buttonList;
+    QList<CustomPushButton*>* m_buttonList;
     QSet<int>* m_disabledButtonIDsList;
     QSet<int>* m_mineIDs;
     void startRound(GameChoiceDialog::Choice choice);
     void newEasyRound();
+    void newIntermediateRound();
 
 
 
@@ -36,7 +37,7 @@ private slots:
     void newGameChoice();
     void bombClicked();
     void reset();
-    void disableClear(bool check);
+    void disableClear();
     void about();
     void checkWin();
 

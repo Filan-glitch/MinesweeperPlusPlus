@@ -3,16 +3,15 @@
 
 #include <QPushButton>
 #include <QSet>
+#include <QMouseEvent>
 
-class CustomPushButton
+class CustomPushButton : public QPushButton
 {
+    Q_OBJECT
 public:
-    explicit CustomPushButton();
-    CustomPushButton(QPushButton *button);
+    explicit CustomPushButton(QWidget *parent = nullptr);
     enum Icon {CLEAR, ONE, TWO, THREE, FOUR, FIVE, SIX, BOMB, FLAG};
-    void setIcon(Icon icon);
-
-    QPushButton *button() const;
+    void setCustomIcon(Icon icon);
 
     bool isMine() const;
 
@@ -28,13 +27,19 @@ public:
 
     Icon role() const;
 
+
+
 private:
-    QPushButton* m_button;
     QSet<CustomPushButton*>* m_neighbours;
     bool m_isMine = false;
     Icon m_icon = CLEAR;
     Icon m_role = CLEAR;
 
+
+
+    // QWidget interface
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
 };
 
 #endif // CUSTOMPUSHBUTTON_H

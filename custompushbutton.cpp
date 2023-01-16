@@ -1,18 +1,18 @@
 #include "custompushbutton.h"
 
-CustomPushButton::CustomPushButton()
+CustomPushButton::CustomPushButton(QWidget *parent) : QPushButton(parent)
 {
-
+    m_neighbours = new QSet<CustomPushButton*>;
 }
 
 //function that sets an icon
-void CustomPushButton::setIcon(Icon icon)
+void CustomPushButton::setCustomIcon(Icon icon)
 {
     switch(icon) {
     case CLEAR: {
         QIcon iconClear(":/unclicked.png");
         iconClear.addFile(":/clear.png", QSize(64,64),QIcon::Disabled,QIcon::Off);
-        m_button->setIcon(iconClear);
+        this->setIcon(iconClear);
         m_icon = CLEAR;
         m_role = CLEAR;
         break;
@@ -20,7 +20,7 @@ void CustomPushButton::setIcon(Icon icon)
     case BOMB: {
         QIcon iconBomb(":/unclicked.png");
         iconBomb.addFile(":/B.png", QSize(64,64),QIcon::Disabled,QIcon::Off);
-        m_button->setIcon(iconBomb);
+        this->setIcon(iconBomb);
         m_icon = BOMB;
         m_role = BOMB;
         break;
@@ -28,7 +28,7 @@ void CustomPushButton::setIcon(Icon icon)
     case ONE: {
         QIcon iconOne(":/unclicked.png");
         iconOne.addFile(":/1.png", QSize(64,64),QIcon::Disabled,QIcon::Off);
-        m_button->setIcon(iconOne);
+        this->setIcon(iconOne);
         m_icon = ONE;
         m_role = ONE;
         break;
@@ -36,7 +36,7 @@ void CustomPushButton::setIcon(Icon icon)
     case TWO: {
         QIcon iconTwo(":/unclicked.png");
         iconTwo.addFile(":/2.png", QSize(64,64),QIcon::Disabled,QIcon::Off);
-        m_button->setIcon(iconTwo);
+        this->setIcon(iconTwo);
         m_icon = TWO;
         m_role = TWO;
         break;
@@ -44,7 +44,7 @@ void CustomPushButton::setIcon(Icon icon)
     case THREE: {
         QIcon iconThree(":/unclicked.png");
         iconThree.addFile(":/3.png", QSize(64,64),QIcon::Disabled,QIcon::Off);
-        m_button->setIcon(iconThree);
+        this->setIcon(iconThree);
         m_icon = THREE;
         m_role = THREE;
         break;
@@ -52,7 +52,7 @@ void CustomPushButton::setIcon(Icon icon)
     case FOUR: {
         QIcon iconFour(":/unclicked.png");
         iconFour.addFile(":/4.png", QSize(64,64),QIcon::Disabled,QIcon::Off);
-        m_button->setIcon(iconFour);
+        this->setIcon(iconFour);
         m_icon = FOUR;
         m_role = FOUR;
         break;
@@ -60,7 +60,7 @@ void CustomPushButton::setIcon(Icon icon)
     case FIVE: {
         QIcon iconFive(":/unclicked.png");
         iconFive.addFile(":/5.png", QSize(64,64),QIcon::Disabled,QIcon::Off);
-        m_button->setIcon(iconFive);
+        this->setIcon(iconFive);
         m_icon = FIVE;
         m_role = FIVE;
         break;
@@ -68,23 +68,18 @@ void CustomPushButton::setIcon(Icon icon)
     case SIX: {
         QIcon iconSix(":/unclicked.png");
         iconSix.addFile(":/6.png", QSize(64,64),QIcon::Disabled,QIcon::Off);
-        m_button->setIcon(iconSix);
+        this->setIcon(iconSix);
         m_icon = SIX;
         m_role = SIX;
         break;
     }
     case FLAG: {
         QIcon iconFlag(":/F.png");
-        m_button->setIcon(iconFlag);
+        this->setIcon(iconFlag);
         m_icon = FLAG;
         break;
     }
     }
-}
-
-QPushButton *CustomPushButton::button() const
-{
-    return m_button;
 }
 
 bool CustomPushButton::isMine() const
@@ -109,27 +104,27 @@ void CustomPushButton::evaluateNeighbours()
     }
     switch(counter) {
     case 1: {
-        setIcon(ONE);
+        setCustomIcon(ONE);
         break;
     }
     case 2: {
-        setIcon(TWO);
+        setCustomIcon(TWO);
         break;
     }
     case 3: {
-        setIcon(THREE);
+        setCustomIcon(THREE);
         break;
     }
     case 4: {
-        setIcon(FOUR);
+        setCustomIcon(FOUR);
         break;
     }
     case 5: {
-        setIcon(FIVE);
+        setCustomIcon(FIVE);
         break;
     }
     case 6: {
-        setIcon(SIX);
+        setCustomIcon(SIX);
         break;
     }
     }
@@ -145,8 +140,8 @@ void CustomPushButton::addNeighbour(CustomPushButton *neighbour)
 void CustomPushButton::disableNeighbours()
 {
     for(CustomPushButton* neighbour : *m_neighbours) {
-        if(neighbour->icon() != BOMB && neighbour->icon() != FLAG && neighbour->button()->isEnabled()){
-            neighbour->button()->setEnabled(false);
+        if(neighbour->icon() != BOMB && neighbour->icon() != FLAG && neighbour->isEnabled()){
+            neighbour->setEnabled(false);
             if(neighbour->icon() == CLEAR) {
                 neighbour->disableNeighbours();
             }
@@ -164,9 +159,16 @@ CustomPushButton::Icon CustomPushButton::role() const
     return m_role;
 }
 
-
-//Constructor
-CustomPushButton::CustomPushButton(QPushButton *button) : m_button(button)
+void CustomPushButton::mousePressEvent(QMouseEvent *event)
 {
-    m_neighbours = new QSet<CustomPushButton*>;
+    if(event->button() == Qt::RightButton) {
+        emit customContextMenuRequested(QPoint());
+    } else if(event->button() == Qt::LeftButton) {
+        if(isEnabled()) {
+            setEnabled(false);
+        } else {
+            setEnabled(true);
+        }
+        emit clicked();
+    }
 }

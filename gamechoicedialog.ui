@@ -32,7 +32,7 @@
      <item>
       <widget class="QRadioButton" name="radio_easy">
        <property name="text">
-        <string>Easy</string>
+        <string>Easy [9x9]</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -42,14 +42,14 @@
      <item>
       <widget class="QRadioButton" name="radio_intermediate">
        <property name="text">
-        <string>Intermediate (WIP)</string>
+        <string>Intermediate [16x16]</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QRadioButton" name="radio_hard">
        <property name="text">
-        <string>Hard (WIP)</string>
+        <string>Hard [15x30] (WIP)</string>
        </property>
       </widget>
      </item>
