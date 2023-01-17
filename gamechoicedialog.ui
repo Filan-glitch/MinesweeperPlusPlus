@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>200</width>
-    <height>150</height>
+    <height>152</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -49,7 +49,7 @@
      <item>
       <widget class="QRadioButton" name="radio_hard">
        <property name="text">
-        <string>Hard [15x30] (WIP)</string>
+        <string>Hard [15x30]</string>
        </property>
       </widget>
      </item>

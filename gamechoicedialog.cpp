@@ -56,6 +56,6 @@ void GameChoiceDialog::hardClicked(bool checked)
     }
     ui->radio_easy->setChecked(false);
     ui->radio_intermediate->setChecked(false);
-    ui->buttonBox->setEnabled(false);
+    ui->buttonBox->setEnabled(true);
     m_choice = HARD;
 }

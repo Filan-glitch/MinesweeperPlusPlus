@@ -29,6 +29,7 @@ private:
     void startRound(GameChoiceDialog::Choice choice);
     void newEasyRound();
     void newIntermediateRound();
+    void newHardRound();
 
 
 
