@@ -73,6 +73,14 @@ void CustomPushButton::setCustomIcon(Icon icon)
         m_role = SIX;
         break;
     }
+    case SEVEN: {
+        QIcon iconSix(":/unclicked.png");
+        iconSix.addFile(":/7.png", QSize(64,64),QIcon::Disabled,QIcon::Off);
+        this->setIcon(iconSix);
+        m_icon = SEVEN;
+        m_role = SEVEN;
+        break;
+    }
     case FLAG: {
         QIcon iconFlag(":/F.png");
         this->setIcon(iconFlag);
@@ -127,6 +135,10 @@ void CustomPushButton::evaluateNeighbours()
         setCustomIcon(SIX);
         break;
     }
+    case 7: {
+        setCustomIcon(SEVEN);
+        break;
+    }
     }
 }
 
@@ -171,5 +183,30 @@ void CustomPushButton::mousePressEvent(QMouseEvent *event)
             setEnabled(true);
         }
         emit clicked();
+    }
+}
+
+void CustomPushButton::confuse() {
+    switch(m_role) {
+    case ONE:
+        setCustomIcon(SEVEN);
+        break;
+    case TWO:
+        setCustomIcon(SIX);
+        break;
+    case THREE:
+        setCustomIcon(FIVE);
+        break;
+    case FIVE:
+        setCustomIcon(THREE);
+        break;
+    case SIX:
+        setCustomIcon(TWO);
+        break;
+    case SEVEN:
+        setCustomIcon(ONE);
+        break;
+    default:
+        break;
     }
 }

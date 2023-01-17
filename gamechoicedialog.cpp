@@ -10,6 +10,7 @@ GameChoiceDialog::GameChoiceDialog(QWidget *parent) :
     connect(ui->radio_easy, SIGNAL(clicked(bool)), this, SLOT(easyClicked(bool)));
     connect(ui->radio_intermediate, SIGNAL(clicked(bool)), this, SLOT(intermediateClicked(bool)));
     connect(ui->radio_hard, SIGNAL(clicked(bool)), this, SLOT(hardClicked(bool)));
+    connect(ui->radio_confusion, SIGNAL(clicked(bool)), this, SLOT(confusionClicked(bool)));
 
 }
 
@@ -58,4 +59,16 @@ void GameChoiceDialog::hardClicked(bool checked)
     ui->radio_intermediate->setChecked(false);
     ui->buttonBox->setEnabled(true);
     m_choice = HARD;
+}
+
+void GameChoiceDialog::confusionClicked(bool checked)
+{
+    if(!checked) {
+        ui->radio_hard->setChecked(true);
+        return;
+    }
+    ui->radio_easy->setChecked(false);
+    ui->radio_intermediate->setChecked(false);
+    ui->buttonBox->setEnabled(true);
+    m_choice = CONFUSION;
 }

@@ -30,6 +30,7 @@ private:
     void newEasyRound();
     void newIntermediateRound();
     void newHardRound();
+    void newConfusionRound();
 
 
 

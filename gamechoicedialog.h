@@ -14,7 +14,7 @@ class GameChoiceDialog : public QDialog
 public:
     explicit GameChoiceDialog(QWidget *parent = nullptr);
     ~GameChoiceDialog();
-    enum Choice {EASY, INTERMEDIATE, HARD};
+    enum Choice {EASY, INTERMEDIATE, HARD, CONFUSION, BEGINNER1, BEGINNER2};
 
     GameChoiceDialog::Choice getChoice() const;
 
@@ -26,6 +26,7 @@ private slots:
     void easyClicked(bool checked);
     void intermediateClicked(bool checked);
     void hardClicked(bool checked);
+    void confusionClicked(bool checked);
 };
 
 #endif // GAMECHOICEDIALOG_H

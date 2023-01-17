@@ -26,6 +26,8 @@ set(PROJECT_SOURCES
         aboutdialog.cpp
         aboutdialog.h
         aboutdialog.ui
+        statstracker.cpp
+        statstracker.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

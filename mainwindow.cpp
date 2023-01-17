@@ -48,7 +48,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->playWidget->setFixedSize(screenSize);
     QLayout* layout = new QGridLayout(this);
     ui->playWidget->setLayout(layout);
-    ui->horizontalSpacer->changeSize(screenSize.width() * 0.5, screenSize.height() * 0.05, QSizePolicy::Fixed);
 }
 
 MainWindow::~MainWindow()
@@ -76,6 +75,10 @@ void MainWindow::startRound(GameChoiceDialog::Choice choice) {
     case GameChoiceDialog::HARD: {
         newHardRound();
         break;
+    case GameChoiceDialog::CONFUSION: {
+        newConfusionRound();
+        break;
+        }
     }
     }
 
@@ -101,7 +104,7 @@ void MainWindow::newEasyRound() {
     //Widget Size
     QSize screenSize = QGuiApplication::primaryScreen()->availableGeometry().size() * 0.67;
     screenSize.setWidth(screenSize.height());
-    screenSize.setHeight(screenSize.height() * 1.25);
+    screenSize.setHeight(screenSize.height() * 1.2);
     setFixedSize(screenSize);
 
     screenSize.setHeight(screenSize.width() * 0.987);
@@ -284,16 +287,18 @@ void MainWindow::newIntermediateRound() {
 
 //function that setups a new hard round
 void MainWindow::newHardRound() {
+
     //Widget Size
-    QSize screenSize = QGuiApplication::primaryScreen()->availableGeometry().size() * 0.75;
-    screenSize.setWidth(screenSize.height() * 2);
+    QSize screenSize = QGuiApplication::primaryScreen()->availableGeometry().size() * 0.67;
+    screenSize.setWidth(screenSize.height() * 1.875);
     screenSize.setHeight(screenSize.height() * 1.25);
     setFixedSize(screenSize);
 
-    screenSize.setHeight(screenSize.height() * 0.875);
+
+    screenSize.setHeight((screenSize.width() / 1.875) * 0.987);
     screenSize.setWidth(screenSize.width() * 0.987);
     ui->playWidget->setFixedSize(screenSize);
-    ui->horizontalSpacer->changeSize(screenSize.width() * 0.5, screenSize.height() * 0.05, QSizePolicy::Fixed);
+    ui->horizontalSpacer->changeSize(screenSize.width() * 0.75, screenSize.height() * 0.05, QSizePolicy::Fixed);
 
     //Button List
     //rows
@@ -375,6 +380,99 @@ void MainWindow::newHardRound() {
 
     ui->lcdNumber->display(99);
 
+}
+
+//function that setups a new confusion round
+void MainWindow::newConfusionRound() {
+    //Widget Size
+    QSize screenSize = QGuiApplication::primaryScreen()->availableGeometry().size() * 0.67;
+    screenSize.setWidth(screenSize.height());
+    screenSize.setHeight(screenSize.height() * 1.2);
+    setFixedSize(screenSize);
+
+    screenSize.setHeight(screenSize.width() * 0.987);
+    screenSize.setWidth(screenSize.width() * 0.987);
+    ui->playWidget->setFixedSize(screenSize);
+    ui->horizontalSpacer->changeSize(screenSize.width() * 0.5, screenSize.height() * 0.05, QSizePolicy::Fixed);
+
+    //Button List
+    //rows
+    for(int row = 0; row < 9 ; row++) {
+        //columns
+        for(int column = 0; column < 9; column ++){
+        CustomPushButton* button = new CustomPushButton(ui->playWidget);
+        button->setCustomIcon(CustomPushButton::CLEAR);
+        button->setGeometry(0, 0, ui->playWidget->size().height() / 9, ui->playWidget->size().width() / 9);
+        reinterpret_cast<QGridLayout*>(ui->playWidget->layout())->addWidget(button, row, column);
+        button->setFixedSize(ui->playWidget->size() / 9);
+        button->setMinimumSize(ui->playWidget->size() / 9);
+        button->setMaximumSize(ui->playWidget->size() / 9);
+        button->setIconSize(ui->playWidget->size() / 9);
+        m_buttonList->append(button);
+        }
+    }
+    //Add Neighbours to every button and connection
+    for(int i = 0; i < m_buttonList->size(); i++) {
+        QVector<int> vec = {-10,-9,-8,-1,1,8,9,10};
+        if(i < 9) {
+            vec.removeOne(-10);
+            vec.removeOne(-9);
+            vec.removeOne(-8);
+        } else if(i > 71) {
+            vec.removeOne(10);
+            vec.removeOne(9);
+            vec.removeOne(8);
+        }
+        if((i % 9) == 0) {
+            vec.removeOne(-10);
+            vec.removeOne(-1);
+            vec.removeOne(8);
+        } else if(((i + 1) % 9) == 0) {
+            vec.removeOne(10);
+            vec.removeOne(1);
+            vec.removeOne(-8);
+        }
+        for(int j : vec) {
+            (*m_buttonList)[i]->addNeighbour((*m_buttonList)[i + j]);
+        }
+        CustomPushButton* button = (*m_buttonList)[i];
+        connect(button, &QPushButton::customContextMenuRequested, [button]() {
+                    qDebug() << "Button: " << button->objectName() << " icon: " << button->icon() << " role: " << button->role();
+                    MainWindow* window = reinterpret_cast<MainWindow*>(button->parent()->parent()->parent());
+                    if(button->icon() == CustomPushButton::FLAG) {
+                        button->setCustomIcon(button->role());
+                        window->ui->lcdNumber->display(window->ui->lcdNumber->intValue() + 1);
+                    } else if(window->ui->lcdNumber->intValue() > 0){
+                       button->setCustomIcon(CustomPushButton::FLAG);
+                       window->ui->lcdNumber->display(window->ui->lcdNumber->intValue() - 1);
+                    }
+                });
+    }
+
+    //Random Bomb Generation
+    std::default_random_engine generator(rand());
+    std::uniform_int_distribution<int> chance(0,80);
+    while(m_mineIDs->size() != 10) {
+        int mineID = chance(generator);
+        //check for corners
+        if(mineID == 0 || mineID == 8 || mineID == 72 || mineID == 80) continue;
+        m_mineIDs->insert(mineID);
+    }
+    for(int mineID : *m_mineIDs) {
+        (*m_buttonList)[mineID]->setCustomIcon(CustomPushButton::BOMB);
+        (*m_buttonList)[mineID]->setIsMine(true);
+        connect(m_buttonList->at(mineID), SIGNAL(clicked()), this, SLOT(bombClicked()));
+    }
+    for(int i = 0; i < m_buttonList->size(); i++) {
+        CustomPushButton* button = (*m_buttonList)[i];
+        button->evaluateNeighbours();
+        button->confuse();
+        if(button->role() == CustomPushButton::CLEAR) {
+            connect(button, SIGNAL(clicked()), this, SLOT(disableClear()));
+        }
+    }
+
+    ui->lcdNumber->display(10);
 }
 
 //slot that gets accessed, when a mine gets clicked
