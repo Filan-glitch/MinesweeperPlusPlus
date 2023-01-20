@@ -94,8 +94,7 @@ void StatsTracker::roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win,
                 m_easyStats["Best Time"] = time;
                 break;
             }
-            QString bestTime = m_easyStats["Best Time"].toString();
-            if(time > ((bestTime[0].digitValue()*10 + bestTime[1].digitValue())*360 + (bestTime[3].digitValue()*10 + bestTime[4].digitValue())*60 + (bestTime[6].digitValue()*10 + bestTime[7].digitValue()))) {
+            if(time < m_easyStats["Best Time"].toInt()) {
                 m_easyStats["Best Time"] = time;
             }
         } else {
@@ -111,8 +110,7 @@ void StatsTracker::roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win,
                 m_intermediateStats["Best Time"] = time;
                 break;
             }
-            QString bestTime = m_intermediateStats["Best Time"].toString();
-            if(time > ((bestTime[0].digitValue()*10 + bestTime[1].digitValue())*360 + (bestTime[3].digitValue()*10 + bestTime[4].digitValue())*60 + (bestTime[6].digitValue()*10 + bestTime[7].digitValue()))) {
+            if(time < m_intermediateStats["Best Time"].toInt()) {
                 m_intermediateStats["Best Time"] = time;
             }
         } else {
@@ -128,8 +126,8 @@ void StatsTracker::roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win,
                 m_hardStats["Best Time"] = time;
                 break;
             }
-            QString bestTime = m_hardStats["Best Time"].toString();
-            if(time > ((bestTime[0].digitValue()*10 + bestTime[1].digitValue())*360 + (bestTime[3].digitValue()*10 + bestTime[4].digitValue())*60 + (bestTime[6].digitValue()*10 + bestTime[7].digitValue()))) {
+
+            if(time < m_hardStats["Best Time"].toInt()) {
                 m_hardStats["Best Time"] = time;
             }
         } else {
@@ -145,8 +143,7 @@ void StatsTracker::roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win,
                 m_confusionStats["Best Time"] = time;
                 break;
             }
-            QString bestTime = m_confusionStats["Best Time"].toString();
-            if(time > ((bestTime[0].digitValue()*10 + bestTime[1].digitValue())*360 + (bestTime[3].digitValue()*10 + bestTime[4].digitValue())*60 + (bestTime[6].digitValue()*10 + bestTime[7].digitValue()))) {
+            if(time < m_confusionStats["Best Time"].toInt()) {
                 m_confusionStats["Best Time"] = time;
             }
         } else {

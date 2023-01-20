@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>415</width>
-    <height>365</height>
+    <height>316</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,42 +43,35 @@
        <item>
         <widget class="QLabel" name="easyBestTimeLabel">
          <property name="text">
-          <string>Best Time:</string>
+          <string>Best Time: //</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="easyTotalTimeLabel">
          <property name="text">
-          <string>Total Time:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="easyRoundsPlayedLabel">
-         <property name="text">
-          <string>Rounds played:</string>
+          <string>Total Time: //</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="easyWinsLabel">
          <property name="text">
-          <string>Wins:</string>
+          <string>Wins: //</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="easyLosesLabel">
          <property name="text">
-          <string>Loses:</string>
+          <string>Loses: //</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="easyEfficiencyLabel">
          <property name="text">
-          <string>Efficiency: </string>
+          <string>Efficiency: //</string>
          </property>
         </widget>
        </item>
@@ -92,42 +85,35 @@
        <item>
         <widget class="QLabel" name="intermediateBestTimeLabel">
          <property name="text">
-          <string>Best Time:</string>
+          <string>Best Time: //</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="intermediateTotalTimeLabel">
          <property name="text">
-          <string>Total Time:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="intermediateRoundsPlayedLabel">
-         <property name="text">
-          <string>Rounds played:</string>
+          <string>Total Time: //</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="intermediateWinsLabel">
          <property name="text">
-          <string>Wins:</string>
+          <string>Wins: //</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="intermediateLosesLabel">
          <property name="text">
-          <string>Loses:</string>
+          <string>Loses: //</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="intermediateEfficiencyLabel">
          <property name="text">
-          <string>Efficiency: </string>
+          <string>Efficiency: //</string>
          </property>
         </widget>
        </item>
@@ -141,42 +127,35 @@
        <item>
         <widget class="QLabel" name="hardBestTimeLabel">
          <property name="text">
-          <string>Best Time:</string>
+          <string>Best Time: //</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="hardTotalTimeLabel">
          <property name="text">
-          <string>Total Time:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="hardRoundsPlayedLabel">
-         <property name="text">
-          <string>Rounds played:</string>
+          <string>Total Time: //</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="hardWinsLabel">
          <property name="text">
-          <string>Wins:</string>
+          <string>Wins: //</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="hardLosesLabel">
          <property name="text">
-          <string>Loses:</string>
+          <string>Loses: //</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="hardEfficiencyLabel">
          <property name="text">
-          <string>Efficiency: </string>
+          <string>Efficiency: //</string>
          </property>
         </widget>
        </item>
@@ -190,42 +169,35 @@
        <item>
         <widget class="QLabel" name="confusionBestTimeLabel">
          <property name="text">
-          <string>Best Time:</string>
+          <string>Best Time: //</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="confusionTotalTimeLabel">
          <property name="text">
-          <string>Total Time:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="confusionRoundsPlayedLabel">
-         <property name="text">
-          <string>Rounds played:</string>
+          <string>Total Time: //</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="confusionWinsLabel">
          <property name="text">
-          <string>Wins:</string>
+          <string>Wins: //</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="confusionLosesLabel">
          <property name="text">
-          <string>Loses:</string>
+          <string>Loses: //</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="confusionEfficiencyLabel">
          <property name="text">
-          <string>Efficiency: </string>
+          <string>Efficiency: //</string>
          </property>
         </widget>
        </item>

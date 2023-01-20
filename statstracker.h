@@ -23,7 +23,7 @@ public:
     QJsonObject intermediateStats() const;
     QJsonObject hardStats() const;
     QJsonObject confusionStats() const;
-    void roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win, int time, float efficiency = NULL);
+    void roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win, int time, float efficiency = 0.0f);
 
 private:
     QJsonObject m_easyStats;

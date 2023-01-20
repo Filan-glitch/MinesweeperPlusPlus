@@ -21,34 +21,59 @@ StatsDialog::StatsDialog(const QJsonObject &easyStats, const QJsonObject &interm
     m_confusionStats(confusionStats)
 {
     ui->setupUi(this);
-    ui->easyBestTimeLabel->setText(QString::asprintf("Best Time: %s", m_easyStats["Best Time"].toString().toStdString().c_str()));
-    ui->easyTotalTimeLabel->setText(QString::asprintf("Total Time: %s", m_easyStats["Total Time"].toString().toStdString().c_str()));
-    ui->easyRoundsPlayedLabel->setText(QString::asprintf("Rounds Played: %s", m_easyStats["Rounds Played"].toString().toStdString().c_str()));
-    ui->easyWinsLabel->setText(QString::asprintf("Wins: %s", m_easyStats["Wins"].toString().toStdString().c_str()));
-    ui->easyLosesLabel->setText(QString::asprintf("Loses: %s", m_easyStats["Loses"].toString().toStdString().c_str()));
-    ui->easyEfficiencyLabel->setText(QString::asprintf("Efficiency: %s", m_easyStats["Efficiency"].toString().toStdString().c_str()));
+    ui->easyBestTimeLabel->setText("Best Time: " + QString::number(m_easyStats["Best Time"].toInt()));
+    ui->easyTotalTimeLabel->setText("Total Time: " + QString::number(m_easyStats["Total Time"].toInt()));
+    ui->easyWinsLabel->setText("Wins: " + QString::number(m_easyStats["Wins"].toInt()));
+    ui->easyLosesLabel->setText("Loses: " + QString::number(m_easyStats["Loses"].toInt()));
+    ui->easyEfficiencyLabel->setText("Efficiency: " + QString::number(m_easyStats["Efficiency"].toDouble()));
 
-    ui->intermediateBestTimeLabel->setText(QString::asprintf("Best Time: %s", m_intermediateStats["Best Time"].toString().toStdString().c_str()));
-    ui->intermediateTotalTimeLabel->setText(QString::asprintf("Total Time: %s", m_intermediateStats["Total Time"].toString().toStdString().c_str()));
-    ui->intermediateRoundsPlayedLabel->setText(QString::asprintf("Rounds Played: %s", m_intermediateStats["Rounds Played"].toString().toStdString().c_str()));
-    ui->intermediateWinsLabel->setText(QString::asprintf("Wins: %s", m_intermediateStats["Wins"].toString().toStdString().c_str()));
-    ui->intermediateLosesLabel->setText(QString::asprintf("Loses: %s", m_intermediateStats["Loses"].toString().toStdString().c_str()));
-    ui->intermediateEfficiencyLabel->setText(QString::asprintf("Efficiency: %s", m_intermediateStats["Efficiency"].toString().toStdString().c_str()));
+    ui->intermediateBestTimeLabel->setText("Best Time: " + QString::number(m_intermediateStats["Best Time"].toInt()));
+    ui->intermediateTotalTimeLabel->setText("Total Time: " + QString::number(m_intermediateStats["Total Time"].toInt()));
+    ui->intermediateWinsLabel->setText("Wins: " + QString::number(m_intermediateStats["Wins"].toInt()));
+    ui->intermediateLosesLabel->setText("Loses: " + QString::number(m_intermediateStats["Loses"].toInt()));
+    ui->intermediateEfficiencyLabel->setText("Efficiency: " + QString::number(m_intermediateStats["Efficiency"].toDouble()));
 
-    ui->hardBestTimeLabel->setText(QString::asprintf("Best Time: %s", m_hardStats["Best Time"].toString().toStdString().c_str()));
-    ui->hardTotalTimeLabel->setText(QString::asprintf("Total Time: %s", m_hardStats["Total Time"].toString().toStdString().c_str()));
-    ui->hardRoundsPlayedLabel->setText(QString::asprintf("Rounds Played: %s", m_hardStats["Rounds Played"].toString().toStdString().c_str()));
-    ui->hardWinsLabel->setText(QString::asprintf("Wins: %s", m_hardStats["Wins"].toString().toStdString().c_str()));
-    ui->hardLosesLabel->setText(QString::asprintf("Loses: %s", m_hardStats["Loses"].toString().toStdString().c_str()));
-    ui->hardEfficiencyLabel->setText(QString::asprintf("Efficiency: %s", m_hardStats["Efficiency"].toString().toStdString().c_str()));
+    ui->hardBestTimeLabel->setText("Best Time: " + QString::number(m_hardStats["Best Time"].toInt()));
+    ui->hardTotalTimeLabel->setText("Total Time: " + QString::number(m_hardStats["Total Time"].toInt()));
+    ui->hardWinsLabel->setText("Wins: " + QString::number(m_hardStats["Wins"].toInt()));
+    ui->hardLosesLabel->setText("Loses: " + QString::number(m_hardStats["Loses"].toInt()));
+    ui->hardEfficiencyLabel->setText("Efficiency: " + QString::number(m_hardStats["Efficiency"].toDouble()));
 
-    ui->confusionBestTimeLabel->setText(QString::asprintf("Best Time: %s", m_confusionStats["Best Time"].toString().toStdString().c_str()));
-    ui->confusionTotalTimeLabel->setText(QString::asprintf("Total Time: %s", m_confusionStats["Total Time"].toString().toStdString().c_str()));
-    ui->confusionRoundsPlayedLabel->setText(QString::asprintf("Rounds Played: %s", m_confusionStats["Rounds Played"].toString().toStdString().c_str()));
-    ui->confusionWinsLabel->setText(QString::asprintf("Wins: %s", m_confusionStats["Wins"].toString().toStdString().c_str()));
-    ui->confusionLosesLabel->setText(QString::asprintf("Loses: %s", m_confusionStats["Loses"].toString().toStdString().c_str()));
-    ui->confusionEfficiencyLabel->setText(QString::asprintf("Efficiency: %s", m_confusionStats["Efficiency"].toString().toStdString().c_str()));
+    ui->confusionBestTimeLabel->setText("Best Time: " + QString::number(m_confusionStats["Best Time"].toInt()));
+    ui->confusionTotalTimeLabel->setText("Total Time: " + QString::number(m_confusionStats["Total Time"].toInt()));
+    ui->confusionWinsLabel->setText("Wins: " + QString::number(m_confusionStats["Wins"].toInt()));
+    ui->confusionLosesLabel->setText("Loses: " + QString::number(m_confusionStats["Loses"].toInt()));
+    ui->confusionEfficiencyLabel->setText("Efficiency: " + QString::number(m_confusionStats["Efficiency"].toDouble()));
 
     MainWindow* mainwindow = reinterpret_cast<MainWindow*>(this->parent());
     connect(ui->pushButtonReset, SIGNAL(clicked()), mainwindow->m_statsTracker, SLOT(resetStats()));
 }
+
+void StatsDialog::on_pushButtonReset_clicked()
+{
+    ui->easyBestTimeLabel->setText("Best Time: 0");
+    ui->easyTotalTimeLabel->setText("Total Time: 0");
+    ui->easyWinsLabel->setText("Wins: 0");
+    ui->easyLosesLabel->setText("Loses: 0");
+    ui->easyEfficiencyLabel->setText("Efficiency: 0");
+
+    ui->intermediateBestTimeLabel->setText("Best Time: 0");
+    ui->intermediateTotalTimeLabel->setText("Total Time: 0");
+    ui->intermediateWinsLabel->setText("Wins: 0");
+    ui->intermediateLosesLabel->setText("Loses: 0");
+    ui->intermediateEfficiencyLabel->setText("Efficiency: 0");
+
+    ui->hardBestTimeLabel->setText("Best Time: 0");
+    ui->hardTotalTimeLabel->setText("Total Time: 0");
+    ui->hardWinsLabel->setText("Wins: 0");
+    ui->hardLosesLabel->setText("Loses: 0");
+    ui->hardEfficiencyLabel->setText("Efficiency: 0");
+
+    ui->confusionBestTimeLabel->setText("Best Time: 0");
+    ui->confusionTotalTimeLabel->setText("Total Time: 0");
+    ui->confusionWinsLabel->setText("Wins: 0");
+    ui->confusionLosesLabel->setText("Loses: 0");
+    ui->confusionEfficiencyLabel->setText("Efficiency: 0");
+    ui->pushButtonReset->setEnabled(false);
+}
+

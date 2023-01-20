@@ -17,6 +17,9 @@ public:
     StatsDialog(const QJsonObject &easyStats, const QJsonObject &intermediateStats, const QJsonObject &hardStats, const QJsonObject &confusionStats, QWidget *parent = nullptr);
     ~StatsDialog();
 
+private slots:
+    void on_pushButtonReset_clicked();
+
 private:
     Ui::StatsDialog *ui;
     QJsonObject m_easyStats;

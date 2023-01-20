@@ -516,6 +516,7 @@ void MainWindow::updateStats()
 //function that executes the stats dialog
 void MainWindow::showStats()
 {
+
     StatsDialog dlg(m_statsTracker->easyStats(), m_statsTracker->intermediateStats(), m_statsTracker->hardStats(), m_statsTracker->confusionStats(), this);
     dlg.exec();
 }
@@ -555,6 +556,7 @@ void MainWindow::reset() {
     ui->actionShow_Result->setEnabled(false);
     ui->actionReset->setVisible(false);
     m_disabledButtonIDsList->clear();
+    m_currentRoundPlaytime = 0;
 
     QSize screenSize = QGuiApplication::primaryScreen()->availableGeometry().size() * 0.67;
     screenSize.setWidth(screenSize.height());
