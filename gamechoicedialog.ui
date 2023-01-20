@@ -24,7 +24,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="Icons.qrc">
-    <normaloff>:/minesweeper_logo.png</normaloff>:/minesweeper_logo.png</iconset>
+    <normaloff>:/ressources/minesweeper_logo.png</normaloff>:/ressources/minesweeper_logo.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>

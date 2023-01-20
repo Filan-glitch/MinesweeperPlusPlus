@@ -21,7 +21,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="Icons.qrc">
-    <normaloff>:/minesweeper_logo.png</normaloff>:/minesweeper_logo.png</iconset>
+    <normaloff>:/ressources/minesweeper_logo.png</normaloff>:/ressources/minesweeper_logo.png</iconset>
   </property>
   <property name="animated">
    <bool>true</bool>
@@ -248,7 +248,7 @@
      <x>0</x>
      <y>0</y>
      <width>628</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGame">
@@ -259,6 +259,7 @@
     <addaction name="actionReset"/>
     <addaction name="separator"/>
     <addaction name="actionShow_Result"/>
+    <addaction name="actionStatistics"/>
    </widget>
    <widget class="QMenu" name="menuHelo">
     <property name="title">
@@ -294,6 +295,11 @@
   <action name="actionReset">
    <property name="text">
     <string>Reset</string>
+   </property>
+  </action>
+  <action name="actionStatistics">
+   <property name="text">
+    <string>Statistics</string>
    </property>
   </action>
  </widget>

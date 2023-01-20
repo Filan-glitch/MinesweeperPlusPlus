@@ -1,15 +1,10 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
-#include "gamechoicedialog.h"
-#include <QMessageBox>
-#include <random>
-#include <QSet>
+#include "statsdialog.h"
 #include "aboutdialog.h"
-#include <QDebug>
-#include <QGuiApplication>
-#include <QScreen>
 
 
+//Constructor
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -18,11 +13,13 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     QSize screenSize = QGuiApplication::primaryScreen()->availableGeometry().size() * 0.67;
     screenSize.setWidth(screenSize.height());
-    screenSize.setHeight(screenSize.height() * 1.25);
+    screenSize.setHeight(screenSize.height() * 1.2);
     setFixedSize(screenSize);
+
     m_mineIDs = new QSet<int>;
     m_buttonList = new QList<CustomPushButton*>;
     m_disabledButtonIDsList = new QSet<int>;
+    m_statsTracker = new StatsTracker;
     ui->actionReset->setVisible(false);
     ui->actionShow_Result->setEnabled(false);
 
@@ -37,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionReset, SIGNAL(triggered()), this, SLOT(reset()));
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     connect(ui->actionShow_Result, SIGNAL(triggered()), this, SLOT(bombClicked()));
+    connect(ui->actionStatistics, SIGNAL(triggered()), this, SLOT(showStats()));
     connect(m_timer, SIGNAL(timeout()), this, SLOT(checkWin()));
 
 
@@ -50,9 +48,23 @@ MainWindow::MainWindow(QWidget *parent)
     ui->playWidget->setLayout(layout);
 }
 
+//Destructor
 MainWindow::~MainWindow()
 {
+    m_statsTracker->writeStats();
     delete ui;
+}
+
+//Getter for current mode
+GameChoiceDialog::Choice MainWindow::currectMode() const
+{
+    return m_currentMode;
+}
+
+//Setter for current mode
+void MainWindow::setCurrectMode(GameChoiceDialog::Choice newCurrectMode)
+{
+    m_currentMode = newCurrectMode;
 }
 
 //Function to start the round, enables the wanted widget and activates all needed modules
@@ -65,21 +77,34 @@ void MainWindow::startRound(GameChoiceDialog::Choice choice) {
     ui->actionReset->setVisible(true);
     ui->actionShow_Result->setEnabled(true);
     switch(choice) {
-    case GameChoiceDialog::EASY: {
-        newEasyRound();
-        break;
-    }
-    case GameChoiceDialog::INTERMEDIATE:
-        newIntermediateRound();
-        break;
-    case GameChoiceDialog::HARD: {
-        newHardRound();
-        break;
-    case GameChoiceDialog::CONFUSION: {
-        newConfusionRound();
-        break;
+        case GameChoiceDialog::EASY: {
+            m_currentMode = GameChoiceDialog::EASY;
+            newEasyRound();
+            break;
         }
-    }
+        case GameChoiceDialog::INTERMEDIATE: {
+            m_currentMode = GameChoiceDialog::INTERMEDIATE;
+            newIntermediateRound();
+            break;
+        }
+        case GameChoiceDialog::HARD: {
+            m_currentMode = GameChoiceDialog::HARD;
+            newHardRound();
+            break;
+        }
+        case GameChoiceDialog::CONFUSION: {
+            m_currentMode = GameChoiceDialog::CONFUSION;
+            newConfusionRound();
+            break;
+        }
+        case GameChoiceDialog::BEGINNER1: {
+            m_currentMode = GameChoiceDialog::BEGINNER1;
+            break;
+        }
+        case GameChoiceDialog::BEGINNER2: {
+            m_currentMode = GameChoiceDialog::BEGINNER2;
+            break;
+        }
     }
 
 }
@@ -87,13 +112,14 @@ void MainWindow::startRound(GameChoiceDialog::Choice choice) {
 //slot that gets accessed, when the timer fires to update the timer LED
 void MainWindow::updateTimer() {
    QTime tempTime = m_time->addSecs(1);
+   m_currentRoundPlaytime += 1;
    m_time->setHMS(tempTime.hour(),tempTime.minute(),tempTime.second(),tempTime.msec());
    ui->lcdTimer->display(m_time->toString("hh:mm:ss"));
 }
 
 //slot that gets accessed, when the new game action triggeres
 void MainWindow::newGameChoice() {
-    GameChoiceDialog dlg;
+    GameChoiceDialog dlg(this);
     if(dlg.exec() == QDialog::Accepted) {
         startRound(dlg.getChoice());
     }
@@ -475,8 +501,28 @@ void MainWindow::newConfusionRound() {
     ui->lcdNumber->display(10);
 }
 
+//function that calculates the minimum required clicks to win
+int MainWindow::calculateB3V()
+{
+    return 0;
+}
+
+//function that updates the stats.json file
+void MainWindow::updateStats()
+{
+    m_statsTracker->writeStats();
+}
+
+//function that executes the stats dialog
+void MainWindow::showStats()
+{
+    StatsDialog dlg(m_statsTracker->easyStats(), m_statsTracker->intermediateStats(), m_statsTracker->hardStats(), m_statsTracker->confusionStats(), this);
+    dlg.exec();
+}
+
 //slot that gets accessed, when a mine gets clicked
 void MainWindow::bombClicked() {
+    m_statsTracker->roundsPlayedUpdate(m_currentMode, false, m_currentRoundPlaytime);
     for(int i = 0; i < m_buttonList->size(); i++) {
         CustomPushButton* button = (*m_buttonList)[i];
         if(!button->isMine() && button->icon() == CustomPushButton::FLAG) button->setCustomIcon(button->role());
@@ -521,7 +567,7 @@ void MainWindow::reset() {
     ui->horizontalSpacer->changeSize(screenSize.width() * 0.5, screenSize.height() * 0.05, QSizePolicy::Fixed);
 }
 
-//Function that floodfills all the clear buttons
+//function that floodfills all the clear buttons
 void MainWindow::disableClear() {
     //Checking for the button that has been clicked and disabling its neighbours
     for(int i = 0; i < m_buttonList->size(); i++) {
@@ -542,11 +588,13 @@ void MainWindow::disableClear() {
     }
 }
 
+//function that executes the about dialog
 void MainWindow::about() {
-    aboutDialog dlg;
+    aboutDialog dlg(this);
     dlg.exec();
 }
 
+//function that checks, if the round is correctly won
 void MainWindow::checkWin() {
     int counter = 0;
     for(int mineID : *m_mineIDs) {
@@ -555,11 +603,12 @@ void MainWindow::checkWin() {
             counter++;
         }
     }
-    if ((counter == 10 || counter == 40) && ui->lcdNumber->value() == 0) {
+    if ((counter == 10 || counter == 40 || counter == 99) && ui->lcdNumber->value() == 0) {
+        m_statsTracker->roundsPlayedUpdate(m_currentMode, true, m_currentRoundPlaytime);
         ui->playWidget->setEnabled(false);
-        QMessageBox dlg;
+        QMessageBox dlg(this);
         dlg.setWindowTitle("Win Screen");
-        dlg.setWindowIcon(QIcon(":/minesweeper_logo.png"));
+        dlg.setWindowIcon(QIcon(":/ressources/minesweeper_logo.png"));
         dlg.setText("You have won!");
         dlg.setIcon(QMessageBox::Information);
         dlg.addButton("Reset", QMessageBox::AcceptRole);
