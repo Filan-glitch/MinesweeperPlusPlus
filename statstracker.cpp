@@ -120,7 +120,7 @@ void StatsTracker::roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win,
         }
         break;
     case GameChoiceDialog::HARD:
-        m_hardStats["Total Time"] = m_hardStats["Total Time"].toInt() + 1;
+        m_hardStats["Total Time"] = m_hardStats["Total Time"].toInt() + time;
         if(win) {
             m_hardStats["Wins"] = m_hardStats["Wins"].toInt() + 1;
 
@@ -137,7 +137,7 @@ void StatsTracker::roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win,
         }
         break;
     case GameChoiceDialog::CONFUSION:
-        m_confusionStats["Total Time"] = m_confusionStats["Total Time"].toInt() + 1;
+        m_confusionStats["Total Time"] = m_confusionStats["Total Time"].toInt() + time;
         if(win) {
             m_confusionStats["Wins"] = m_confusionStats["Wins"].toInt() + 1;
 
@@ -166,10 +166,35 @@ void StatsTracker::resetStats()
     //deleting old data
     file.moveToTrash();
 
-    //reset data
+    //reset stats.json file
     file.open(QIODevice::WriteOnly);
     file.write("[{\"Mode\": \"Easy\", \"Best Time\": null, \"Total Time\": null, \"Wins\": null, \"Loses\": null, \"Efficiency\": null}, {\"Mode\": \"Intermediate\", \"Best Time\": null, \"Total Time\": null, \"Wins\": null, \"Loses\": null, \"Efficiency\": null}, { \"Mode\": \"Hard\", \"Best Time\": null, \"Total Time\": null, \"Wins\": null, \"Loses\": null, \"Efficiency\": null}, {\"Mode\": \"Confusion\", \"Best Time\": null, \"Total Time\": null, \"Wins\": null, \"Loses\": null, \"Efficiency\": null}]");
     qDebug() << "Statistics were resetted.";
     file.close();
+
+    //reset intern data
+    m_easyStats["Best Time"] = QJsonValue();
+    m_easyStats["Total Time"] = QJsonValue();
+    m_easyStats["Wins"] = QJsonValue();
+    m_easyStats["Loses"] = QJsonValue();
+    m_easyStats["Efficiency"] = QJsonValue();
+
+    m_intermediateStats["Best Time"] = QJsonValue();
+    m_intermediateStats["Total Time"] = QJsonValue();
+    m_intermediateStats["Wins"] = QJsonValue();
+    m_intermediateStats["Loses"] = QJsonValue();
+    m_intermediateStats["Efficiency"] = QJsonValue();
+
+    m_hardStats["Best Time"] = QJsonValue();
+    m_hardStats["Total Time"] = QJsonValue();
+    m_hardStats["Wins"] = QJsonValue();
+    m_hardStats["Loses"] = QJsonValue();
+    m_hardStats["Efficiency"] = QJsonValue();
+
+    m_confusionStats["Best Time"] = QJsonValue();
+    m_confusionStats["Total Time"] = QJsonValue();
+    m_confusionStats["Wins"] = QJsonValue();
+    m_confusionStats["Loses"] = QJsonValue();
+    m_confusionStats["Efficiency"] = QJsonValue();
 }
 
