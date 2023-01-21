@@ -255,7 +255,6 @@
     <property name="title">
      <string>Game</string>
     </property>
-    <addaction name="actionNew_Game"/>
     <addaction name="actionReset"/>
     <addaction name="separator"/>
     <addaction name="actionShow_Result"/>
@@ -280,11 +279,6 @@
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
-   </property>
-  </action>
-  <action name="actionNew_Game">
-   <property name="text">
-    <string>New Game...</string>
    </property>
   </action>
   <action name="actionShow_Result">

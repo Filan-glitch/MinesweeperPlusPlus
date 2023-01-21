@@ -20,7 +20,7 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string>Game Mode Selection</string>
+   <string>Selection</string>
   </property>
   <property name="windowIcon">
    <iconset resource="Icons.qrc">

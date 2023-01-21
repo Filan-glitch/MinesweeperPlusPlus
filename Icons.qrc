@@ -13,5 +13,6 @@
         <file>ressources/F.png</file>
         <file>ressources/minesweeper_logo.png</file>
         <file>ressources/unclicked.png</file>
+        <file>ressources/start_menu.png</file>
     </qresource>
 </RCC>

@@ -7,13 +7,15 @@
 #include <QMessageBox>
 #include <random>
 #include <QSet>
-#include <QDebug>
 #include <QGuiApplication>
 #include <QScreen>
 #include "gamechoicedialog.h"
 #include "custompushbutton.h"
 #include "statstracker.h"
 #include "gamechoicedialog.h"
+#include <QLabel>
+#include <QPixmap>
+#include <QVBoxLayout>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -38,6 +40,7 @@ private:
     QList<CustomPushButton*>* m_buttonList;
     QSet<int>* m_disabledButtonIDsList;
     QSet<int>* m_mineIDs;
+    QPushButton* m_menuImage;
 
     GameChoiceDialog::Choice m_currentMode;
     int m_currentRoundPlaytime = 0;
@@ -51,7 +54,6 @@ private:
 
 private slots:
     void updateTimer();
-    void newGameChoice();
     void bombClicked();
     void reset();
     void disableClear();
@@ -59,6 +61,7 @@ private slots:
     void checkWin();
     void updateStats();
     void showStats();
+    void startMenu();
 
 };
 #endif // MAINWINDOW_H

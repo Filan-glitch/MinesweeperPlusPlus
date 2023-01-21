@@ -11,17 +11,12 @@ MainWindow::MainWindow(QWidget *parent)
 {
     //Setup
     ui->setupUi(this);
-    QSize screenSize = QGuiApplication::primaryScreen()->availableGeometry().size() * 0.67;
-    screenSize.setWidth(screenSize.height());
-    screenSize.setHeight(screenSize.height() * 1.2);
-    setFixedSize(screenSize);
 
+    //Initialisations
     m_mineIDs = new QSet<int>;
     m_buttonList = new QList<CustomPushButton*>;
     m_disabledButtonIDsList = new QSet<int>;
     m_statsTracker = new StatsTracker;
-    ui->actionReset->setVisible(false);
-    ui->actionShow_Result->setEnabled(false);
 
     //Timer
     m_time = new QTime(0,0,0);
@@ -29,7 +24,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->lcdTimer->display(m_time->toString("hh:mm:ss"));
 
     //Connections
-    connect(ui->actionNew_Game, SIGNAL(triggered()), this, SLOT(newGameChoice()));
     connect(m_timer, SIGNAL(timeout()), this, SLOT(updateTimer()));
     connect(ui->actionReset, SIGNAL(triggered()), this, SLOT(reset()));
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
@@ -37,15 +31,39 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionStatistics, SIGNAL(triggered()), this, SLOT(showStats()));
     connect(m_timer, SIGNAL(timeout()), this, SLOT(checkWin()));
 
-
-    //Initial State
-    ui->centralwidget->setVisible(false);
     //Widget
+    QSize screenSize = QGuiApplication::primaryScreen()->availableGeometry().size() * 0.67;
+    screenSize.setWidth(screenSize.height());
+    screenSize.setHeight(screenSize.height());
+    setFixedSize(screenSize);
     screenSize.setHeight(screenSize.width() * 0.987);
     screenSize.setWidth(screenSize.width() * 0.987);
     ui->playWidget->setFixedSize(screenSize);
     QLayout* layout = new QGridLayout(this);
     ui->playWidget->setLayout(layout);
+    this->layout()->setSpacing(0);
+    screenSize = QGuiApplication::primaryScreen()->availableGeometry().size() * 0.67;
+    screenSize.setWidth(screenSize.height());
+    screenSize.setHeight(screenSize.height());
+
+    //Start Menu
+    m_menuImage = new QPushButton(this);
+    m_menuImage->setGeometry(0,0,screenSize.width(), screenSize.height());
+    QPixmap image(":/ressources/start_menu.png");
+    image = image.scaled(screenSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    m_menuImage->setIcon(image);
+    m_menuImage->setIconSize(screenSize);
+    QLayout* generalLayout = new QVBoxLayout(this);
+    generalLayout->addWidget(m_menuImage);
+    this->setLayout(generalLayout);
+    connect(m_menuImage, SIGNAL(clicked()), this, SLOT(startMenu()));
+
+    //Initial State
+    ui->centralwidget->setVisible(false);
+    ui->actionReset->setVisible(false);
+    ui->actionShow_Result->setEnabled(false);
+    ui->menubar->setVisible(false);
+
 }
 
 //Destructor
@@ -73,7 +91,6 @@ void MainWindow::startRound(GameChoiceDialog::Choice choice) {
     ui->centralwidget->setVisible(true);
     ui->playWidget->setVisible(true);
     ui->playWidget->setEnabled(true);
-    ui->actionNew_Game->setVisible(false);
     ui->actionReset->setVisible(true);
     ui->actionShow_Result->setEnabled(true);
     switch(choice) {
@@ -115,14 +132,6 @@ void MainWindow::updateTimer() {
    m_currentRoundPlaytime += 1;
    m_time->setHMS(tempTime.hour(),tempTime.minute(),tempTime.second(),tempTime.msec());
    ui->lcdTimer->display(m_time->toString("hh:mm:ss"));
-}
-
-//slot that gets accessed, when the new game action triggeres
-void MainWindow::newGameChoice() {
-    GameChoiceDialog dlg(this);
-    if(dlg.exec() == QDialog::Accepted) {
-        startRound(dlg.getChoice());
-    }
 }
 
 //function that setups a new easy round
@@ -180,7 +189,6 @@ void MainWindow::newEasyRound() {
         }
         CustomPushButton* button = (*m_buttonList)[i];
         connect(button, &QPushButton::customContextMenuRequested, [button]() {
-                    qDebug() << "Button: " << button->objectName() << " icon: " << button->icon() << " role: " << button->role();
                     MainWindow* window = reinterpret_cast<MainWindow*>(button->parent()->parent()->parent());
                     if(button->icon() == CustomPushButton::FLAG) {
                         button->setCustomIcon(button->role());
@@ -273,7 +281,6 @@ void MainWindow::newIntermediateRound() {
         }
         CustomPushButton* button = (*m_buttonList)[i];
         connect(button, &QPushButton::customContextMenuRequested, [button]() {
-                    qDebug() << "Button: " << button->objectName() << " icon: " << button->icon() << " role: " << button->role();
                     MainWindow* window = reinterpret_cast<MainWindow*>(button->parent()->parent()->parent());
                     if(button->icon() == CustomPushButton::FLAG) {
                         button->setCustomIcon(button->role());
@@ -370,7 +377,6 @@ void MainWindow::newHardRound() {
         }
         CustomPushButton* button = (*m_buttonList)[i];
         connect(button, &QPushButton::customContextMenuRequested, [button]() {
-                    qDebug() << "Button: " << button->objectName() << " icon: " << button->icon() << " role: " << button->role();
                     MainWindow* window = reinterpret_cast<MainWindow*>(button->parent()->parent()->parent());
                     if(button->icon() == CustomPushButton::FLAG) {
                         button->setCustomIcon(button->role());
@@ -463,7 +469,6 @@ void MainWindow::newConfusionRound() {
         }
         CustomPushButton* button = (*m_buttonList)[i];
         connect(button, &QPushButton::customContextMenuRequested, [button]() {
-                    qDebug() << "Button: " << button->objectName() << " icon: " << button->icon() << " role: " << button->role();
                     MainWindow* window = reinterpret_cast<MainWindow*>(button->parent()->parent()->parent());
                     if(button->icon() == CustomPushButton::FLAG) {
                         button->setCustomIcon(button->role());
@@ -530,7 +535,6 @@ void MainWindow::bombClicked() {
     }
     ui->playWidget->setEnabled(false);
     m_timer->stop();
-    ui->actionNew_Game->setVisible(false);
     ui->actionReset->setVisible(true);
     ui->actionShow_Result->setEnabled(false);
 }
@@ -543,7 +547,7 @@ void MainWindow::reset() {
         disconnect(button, nullptr, nullptr, nullptr);
         delete button;
     }
-    //UI resetten
+    //resetting ui and data
     ui->playWidget->setVisible(false);
     ui->centralwidget->setVisible(false);
     m_timer->stop();
@@ -552,21 +556,16 @@ void MainWindow::reset() {
     m_mineIDs->clear();
     ui->lcdNumber->display(0);
     ui->lcdTimer->display("00:00");
-    ui->actionNew_Game->setVisible(true);
     ui->actionShow_Result->setEnabled(false);
     ui->actionReset->setVisible(false);
     m_disabledButtonIDsList->clear();
     m_currentRoundPlaytime = 0;
-
     QSize screenSize = QGuiApplication::primaryScreen()->availableGeometry().size() * 0.67;
     screenSize.setWidth(screenSize.height());
-    screenSize.setHeight(screenSize.height() * 1.25);
+    screenSize.setHeight(screenSize.height());
     setFixedSize(screenSize);
-
-    screenSize.setHeight(screenSize.width() * 0.987);
-    screenSize.setWidth(screenSize.width() * 0.987);
-    ui->playWidget->setFixedSize(screenSize);
-    ui->horizontalSpacer->changeSize(screenSize.width() * 0.5, screenSize.height() * 0.05, QSizePolicy::Fixed);
+    ui->menubar->setVisible(false);
+    m_menuImage->setVisible(true);
 }
 
 //function that floodfills all the clear buttons
@@ -617,4 +616,16 @@ void MainWindow::checkWin() {
         dlg.exec();
         reset();
     }
+}
+
+//function that reacts to Start Menu clicked
+void MainWindow::startMenu() {
+    GameChoiceDialog dlg(this);
+    dlg.setFixedSize(this->size()*0.33);
+    if(dlg.exec() == QDialog::Accepted) {
+        ui->menubar->setVisible(true);
+        m_menuImage->setVisible(false);
+        startRound(dlg.getChoice());
+    }
+
 }
