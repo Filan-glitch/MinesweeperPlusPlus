@@ -2,7 +2,7 @@
 
 CustomPushButton::CustomPushButton(QWidget *parent) : QPushButton(parent)
 {
-    m_neighbours = new QSet<CustomPushButton*>;
+    m_neighbours = new QVector<CustomPushButton*>;
 }
 
 //function that sets the icon of the button and edits every important properties
@@ -74,11 +74,19 @@ void CustomPushButton::setCustomIcon(Icon icon)
         break;
     }
     case SEVEN: {
-        QIcon iconSix(":/ressources/unclicked.png");
-        iconSix.addFile(":/ressources/7.png", QSize(64,64),QIcon::Disabled,QIcon::Off);
-        this->setIcon(iconSix);
+        QIcon iconSeven(":/ressources/unclicked.png");
+        iconSeven.addFile(":/ressources/7.png", QSize(64,64),QIcon::Disabled,QIcon::Off);
+        this->setIcon(iconSeven);
         m_icon = SEVEN;
         m_role = SEVEN;
+        break;
+    }
+    case EIGHT: {
+        QIcon iconEight(":/ressources/unclicked.png");
+        iconEight.addFile(":/ressources/8.png", QSize(64,64),QIcon::Disabled,QIcon::Off);
+        this->setIcon(iconEight);
+        m_icon = EIGHT;
+        m_role = EIGHT;
         break;
     }
     case FLAG: {
@@ -144,13 +152,17 @@ void CustomPushButton::evaluateNeighbours()
         setCustomIcon(SEVEN);
         break;
     }
+    case 8: {
+        setCustomIcon(EIGHT);
+        break;
+    }
     }
 }
 
 //function to add a neighbour button to the list
 void CustomPushButton::addNeighbour(CustomPushButton *neighbour)
 {
-    m_neighbours->insert(neighbour);
+    m_neighbours->push_back(neighbour);
 }
 
 //function, that disables all neighbours, used for clear buttons to open up upto a number button
@@ -198,21 +210,24 @@ void CustomPushButton::mousePressEvent(QMouseEvent *event)
 void CustomPushButton::confuse() {
     switch(m_role) {
     case ONE:
-        setCustomIcon(SEVEN);
+        setCustomIcon(EIGHT);
         break;
     case TWO:
-        setCustomIcon(SIX);
+        setCustomIcon(SEVEN);
         break;
     case THREE:
-        setCustomIcon(FIVE);
+        setCustomIcon(SIX);
         break;
     case FIVE:
-        setCustomIcon(THREE);
+        setCustomIcon(FOUR);
         break;
     case SIX:
-        setCustomIcon(TWO);
+        setCustomIcon(THREE);
         break;
     case SEVEN:
+        setCustomIcon(TWO);
+        break;
+    case EIGHT:
         setCustomIcon(ONE);
         break;
     default:

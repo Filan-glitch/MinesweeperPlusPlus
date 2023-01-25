@@ -14,5 +14,10 @@
         <file>ressources/minesweeper_logo.png</file>
         <file>ressources/unclicked.png</file>
         <file>ressources/start_menu.png</file>
+        <file>ressources/8.png</file>
+        <file>ressources/0lives.png</file>
+        <file>ressources/1lives.png</file>
+        <file>ressources/2lives.png</file>
+        <file>ressources/3lives.png</file>
     </qresource>
 </RCC>

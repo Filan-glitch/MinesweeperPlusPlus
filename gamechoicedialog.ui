@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>211</width>
-    <height>212</height>
+    <width>184</width>
+    <height>268</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -30,9 +30,14 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QRadioButton" name="radio_easy">
+      <widget class="QRadioButton" name="radio_beginnerEasy">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>Easy [9x9]</string>
+        <string>Beginner [9x9]</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -40,7 +45,39 @@
       </widget>
      </item>
      <item>
+      <widget class="QRadioButton" name="radio_beginnerIntermediate">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Beginner [16x16]</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radio_easy">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Easy [9x9]</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QRadioButton" name="radio_intermediate">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>Intermediate [16x16]</string>
        </property>
@@ -48,29 +85,49 @@
      </item>
      <item>
       <widget class="QRadioButton" name="radio_hard">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>Hard [16x30]</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QRadioButton" name="radio_confusion">
+      <widget class="QRadioButton" name="radio_confusionEasy">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>Confusion [9x9]</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QRadioButton" name="radio_BeginnerEasy">
+      <widget class="QRadioButton" name="radio_confusionIntermediate">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>Beginner [9x9] (WIP)</string>
+        <string>Confusion [16x16]</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QRadioButton" name="radio_BegginerIntermediate">
+      <widget class="QRadioButton" name="radio_confusionHard">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>Beginner [16x16] (WIP)</string>
+        <string>Confusion [16x30]</string>
        </property>
       </widget>
      </item>

@@ -10,7 +10,7 @@ class CustomPushButton : public QPushButton
     Q_OBJECT
 public:
     explicit CustomPushButton(QWidget *parent = nullptr);
-    enum Icon {CLEAR, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, BOMB, FLAG, GOLD};
+    enum Icon {CLEAR, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, BOMB, FLAG};
     void setCustomIcon(Icon icon);
 
     bool isMine() const;
@@ -32,10 +32,11 @@ public:
 
 
 private:
-    QSet<CustomPushButton*>* m_neighbours;
+    QVector<CustomPushButton*>* m_neighbours;
     bool m_isMine = false;
     Icon m_icon = CLEAR;
     Icon m_role = CLEAR;
+    bool m_isMarked = false;
 
 
 

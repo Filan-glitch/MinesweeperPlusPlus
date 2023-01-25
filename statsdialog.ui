@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>415</width>
+    <width>487</width>
     <height>316</height>
    </rect>
   </property>
@@ -30,7 +30,7 @@
       <string notr="true"/>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="EasyPage">
       <property name="toolTip">
@@ -161,43 +161,127 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="ConfusionPage">
+     <widget class="QWidget" name="ConfusionEasyPage">
       <attribute name="title">
-       <string>Confusion</string>
+       <string>Confusion (easy)</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <widget class="QLabel" name="confusionBestTimeLabel">
+        <widget class="QLabel" name="confusionEasyBestTimeLabel">
          <property name="text">
           <string>Best Time: //</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="confusionTotalTimeLabel">
+        <widget class="QLabel" name="confusionEasyTotalTimeLabel">
          <property name="text">
           <string>Total Time: //</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="confusionWinsLabel">
+        <widget class="QLabel" name="confusionEasyWinsLabel">
          <property name="text">
           <string>Wins: //</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="confusionLosesLabel">
+        <widget class="QLabel" name="confusionEasyLosesLabel">
          <property name="text">
           <string>Loses: //</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="confusionEfficiencyLabel">
+        <widget class="QLabel" name="confusionEasyEfficiencyLabel">
          <property name="text">
           <string>Efficiency: //</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="ConfusionIntermediatePage">
+      <attribute name="title">
+       <string>Confusion (intermediate)</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QLabel" name="confusionIntermediateBestTimeLabel">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="confusionIntermediateTotalTimeLabel">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="confusionIntermediateWinsLabel">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="confusionIntermediateLosesLabel">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="confusionIntermediateEfficiencyLabel">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="ConfusionHardPage">
+      <attribute name="title">
+       <string>Confusion (hard)</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <item>
+        <widget class="QLabel" name="confusionHardBestTimeLabel">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="confusionHardTotalTimeLabel">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="confusionHardWinsLabel">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="confusionHardLosesLabel">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="confusionHardEfficiencyLabel">
+         <property name="text">
+          <string>TextLabel</string>
          </property>
         </widget>
        </item>

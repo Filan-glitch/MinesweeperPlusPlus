@@ -16,10 +16,13 @@
 #include <QLabel>
 #include <QPixmap>
 #include <QVBoxLayout>
+#include <algorithm>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
+
+using namespace std;
 
 class MainWindow : public QMainWindow
 {
@@ -29,8 +32,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    GameChoiceDialog::Choice currectMode() const;
-    void setCurrectMode(GameChoiceDialog::Choice newCurrectMode);
+    GameChoiceDialog::Choice currentMode() const;
+    void setCurrentMode(GameChoiceDialog::Choice newCurrentMode);
     StatsTracker* m_statsTracker;
 
 private:
@@ -39,18 +42,21 @@ private:
     QTime* m_time;
     QList<CustomPushButton*>* m_buttonList;
     QSet<int>* m_disabledButtonIDsList;
-    QSet<int>* m_mineIDs;
+    QVector<int>* m_mineIDs;
     QPushButton* m_menuImage;
-
     GameChoiceDialog::Choice m_currentMode;
     int m_currentRoundPlaytime = 0;
+    int m_clicks = 0;
+    int m_hearts = 1;
 
     void startRound(GameChoiceDialog::Choice choice);
-    void newEasyRound();
-    void newIntermediateRound();
-    void newHardRound();
-    void newConfusionRound();
+    void newEasyRound(bool confusion, bool beginner);
+    void newIntermediateRound(bool confusion, bool beginner);
+    void newHardRound(bool confusion);
     int calculateB3V();
+    void generateBombs(int rows, int columns, int bombs);
+    void changeHearts(int amount, QSize* screenSize);
+    void changeHearts(int amount);
 
 private slots:
     void updateTimer();

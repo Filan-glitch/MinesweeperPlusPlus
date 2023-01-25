@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>628</width>
-    <height>344</height>
+    <width>1280</width>
+    <height>355</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Minesweeper</string>
+   <string>Minesweeper++</string>
   </property>
   <property name="windowIcon">
    <iconset resource="Icons.qrc">
@@ -198,6 +198,32 @@
        </widget>
       </item>
       <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Maximum</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>50</width>
+          <height>30</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="heartsLabel">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -208,7 +234,7 @@
         <property name="sizeHint" stdset="0">
          <size>
           <width>50</width>
-          <height>5</height>
+          <height>30</height>
          </size>
         </property>
        </spacer>
@@ -247,7 +273,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>628</width>
+     <width>1280</width>
      <height>21</height>
     </rect>
    </property>
@@ -258,6 +284,8 @@
     <addaction name="actionReset"/>
     <addaction name="separator"/>
     <addaction name="actionShow_Result"/>
+    <addaction name="actionItems"/>
+    <addaction name="separator"/>
     <addaction name="actionStatistics"/>
    </widget>
    <widget class="QMenu" name="menuHelo">
@@ -265,6 +293,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionAbout"/>
+    <addaction name="actionI_need_help"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -294,6 +323,16 @@
   <action name="actionStatistics">
    <property name="text">
     <string>Statistics</string>
+   </property>
+  </action>
+  <action name="actionItems">
+   <property name="text">
+    <string>Items</string>
+   </property>
+  </action>
+  <action name="actionI_need_help">
+   <property name="text">
+    <string>I need help...</string>
    </property>
   </action>
  </widget>

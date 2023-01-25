@@ -13,8 +13,8 @@ class StatsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit StatsDialog(QWidget *parent = nullptr);
-    StatsDialog(const QJsonObject &easyStats, const QJsonObject &intermediateStats, const QJsonObject &hardStats, const QJsonObject &confusionStats, QWidget *parent = nullptr);
+    explicit StatsDialog(const QJsonObject &easyStats, const QJsonObject &intermediateStats, const QJsonObject &hardStats, const QJsonObject &confusionEasyStats, const QJsonObject &confusionIntermediateStats, const QJsonObject &confusionHardStats, QWidget *parent = nullptr);
+
     ~StatsDialog();
 
 private slots:
@@ -25,7 +25,9 @@ private:
     QJsonObject m_easyStats;
     QJsonObject m_intermediateStats;
     QJsonObject m_hardStats;
-    QJsonObject m_confusionStats;
+    QJsonObject m_confusionEasyStats;
+    QJsonObject m_confusionIntermediateStats;
+    QJsonObject m_confusionHardStats;
 };
 
 #endif // STATSDIALOG_H

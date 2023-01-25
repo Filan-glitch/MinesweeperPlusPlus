@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     //Initialisations
-    m_mineIDs = new QSet<int>;
+    m_mineIDs = new QVector<int>;
     m_buttonList = new QList<CustomPushButton*>;
     m_disabledButtonIDsList = new QSet<int>;
     m_statsTracker = new StatsTracker;
@@ -74,15 +74,15 @@ MainWindow::~MainWindow()
 }
 
 //Getter for current mode
-GameChoiceDialog::Choice MainWindow::currectMode() const
+GameChoiceDialog::Choice MainWindow::currentMode() const
 {
     return m_currentMode;
 }
 
 //Setter for current mode
-void MainWindow::setCurrectMode(GameChoiceDialog::Choice newCurrectMode)
+void MainWindow::setCurrentMode(GameChoiceDialog::Choice newCurrentMode)
 {
-    m_currentMode = newCurrectMode;
+    m_currentMode = newCurrentMode;
 }
 
 //Function to start the round, enables the wanted widget and activates all needed modules
@@ -93,33 +93,48 @@ void MainWindow::startRound(GameChoiceDialog::Choice choice) {
     ui->playWidget->setEnabled(true);
     ui->actionReset->setVisible(true);
     ui->actionShow_Result->setEnabled(true);
+    ui->actionItems->setEnabled(true);
     switch(choice) {
         case GameChoiceDialog::EASY: {
             m_currentMode = GameChoiceDialog::EASY;
-            newEasyRound();
+            newEasyRound(false, false);
             break;
         }
         case GameChoiceDialog::INTERMEDIATE: {
             m_currentMode = GameChoiceDialog::INTERMEDIATE;
-            newIntermediateRound();
+            newIntermediateRound(false, false);
             break;
         }
         case GameChoiceDialog::HARD: {
             m_currentMode = GameChoiceDialog::HARD;
-            newHardRound();
+            newHardRound(false);
             break;
         }
-        case GameChoiceDialog::CONFUSION: {
-            m_currentMode = GameChoiceDialog::CONFUSION;
-            newConfusionRound();
+        case GameChoiceDialog::CONFUSION1: {
+            m_currentMode = GameChoiceDialog::CONFUSION1;
+            newEasyRound(true, false);
+            break;
+        }
+        case GameChoiceDialog::CONFUSION2: {
+            m_currentMode = GameChoiceDialog::CONFUSION2;
+            newIntermediateRound(true, false);
+            break;
+        }
+        case GameChoiceDialog::CONFUSION3: {
+            m_currentMode = GameChoiceDialog::CONFUSION3;
+            newHardRound(true);
             break;
         }
         case GameChoiceDialog::BEGINNER1: {
             m_currentMode = GameChoiceDialog::BEGINNER1;
+            m_hearts = 2;
+            newEasyRound(false, true);
             break;
         }
         case GameChoiceDialog::BEGINNER2: {
             m_currentMode = GameChoiceDialog::BEGINNER2;
+            m_hearts = 3;
+            newIntermediateRound(false, true);
             break;
         }
     }
@@ -135,7 +150,7 @@ void MainWindow::updateTimer() {
 }
 
 //function that setups a new easy round
-void MainWindow::newEasyRound() {
+void MainWindow::newEasyRound(bool confusion, bool beginner) {
     //Widget Size
     QSize screenSize = QGuiApplication::primaryScreen()->availableGeometry().size() * 0.67;
     screenSize.setWidth(screenSize.height());
@@ -145,46 +160,56 @@ void MainWindow::newEasyRound() {
     screenSize.setHeight(screenSize.width() * 0.987);
     screenSize.setWidth(screenSize.width() * 0.987);
     ui->playWidget->setFixedSize(screenSize);
-    ui->horizontalSpacer->changeSize(screenSize.width() * 0.5, screenSize.height() * 0.05, QSizePolicy::Fixed);
+    ui->heartsLabel->setFixedSize(screenSize.width() * 0.4, screenSize.height() * 0.08);
+    if(!beginner) {
+        changeHearts(1, &screenSize);
+    } else {
+        changeHearts(2, &screenSize);
+    }
 
     //Button List
     //rows
-    for(int row = 0; row < 9 ; row++) {
+    constexpr std::size_t rows = 9;
+    constexpr std::size_t columns = 9;
+    constexpr std::size_t buttonCount = rows * columns;
+    m_buttonList->reserve(buttonCount);
+    const auto buttonSize = screenSize / rows;
+    for(size_t row = 0; row < rows; ++row) {
         //columns
-        for(int column = 0; column < 9; column ++){
-        CustomPushButton* button = new CustomPushButton(ui->playWidget);
+        for(size_t column = 0; column < columns; ++column){
+        auto button = new CustomPushButton(ui->playWidget);
         button->setCustomIcon(CustomPushButton::CLEAR);
-        button->setGeometry(0, 0, ui->playWidget->size().height() / 9, ui->playWidget->size().width() / 9);
+        button->setGeometry(0, 0, buttonSize.height(), buttonSize.width());
         reinterpret_cast<QGridLayout*>(ui->playWidget->layout())->addWidget(button, row, column);
-        button->setFixedSize(ui->playWidget->size() / 9);
-        button->setMinimumSize(ui->playWidget->size() / 9);
-        button->setMaximumSize(ui->playWidget->size() / 9);
-        button->setIconSize(ui->playWidget->size() / 9);
+        button->setFixedSize(buttonSize);
+        button->setMinimumSize(buttonSize);
+        button->setMaximumSize(buttonSize);
+        button->setIconSize(buttonSize);
         m_buttonList->append(button);
         }
     }
     //Add Neighbours to every button and connection
     for(int i = 0; i < m_buttonList->size(); i++) {
-        QVector<int> vec = {-10,-9,-8,-1,1,8,9,10};
-        if(i < 9) {
-            vec.removeOne(-10);
-            vec.removeOne(-9);
-            vec.removeOne(-8);
-        } else if(i > 71) {
-            vec.removeOne(10);
-            vec.removeOne(9);
-            vec.removeOne(8);
+        QVector<int> neighboursOffset = {-10,-9,-8,-1,1,8,9,10};
+        if(i < columns) {
+            neighboursOffset.removeOne(-10);
+            neighboursOffset.removeOne(-9);
+            neighboursOffset.removeOne(-8);
+        } else if(i >= buttonCount - columns) {
+            neighboursOffset.removeOne(10);
+            neighboursOffset.removeOne(9);
+            neighboursOffset.removeOne(8);
         }
-        if((i % 9) == 0) {
-            vec.removeOne(-10);
-            vec.removeOne(-1);
-            vec.removeOne(8);
-        } else if(((i + 1) % 9) == 0) {
-            vec.removeOne(10);
-            vec.removeOne(1);
-            vec.removeOne(-8);
+        if(i % columns == 0) {
+            neighboursOffset.removeOne(-10);
+            neighboursOffset.removeOne(-1);
+            neighboursOffset.removeOne(8);
+        } else if((i + 1) % columns == 0) {
+            neighboursOffset.removeOne(10);
+            neighboursOffset.removeOne(1);
+            neighboursOffset.removeOne(-8);
         }
-        for(int j : vec) {
+        for(const auto j : neighboursOffset) {
             (*m_buttonList)[i]->addNeighbour((*m_buttonList)[i + j]);
         }
         CustomPushButton* button = (*m_buttonList)[i];
@@ -201,15 +226,8 @@ void MainWindow::newEasyRound() {
     }
 
     //Random Bomb Generation
-    std::default_random_engine generator(rand());
-    std::uniform_int_distribution<int> chance(0,80);
-    while(m_mineIDs->size() != 10) {
-        int mineID = chance(generator);
-        //check for corners
-        if(mineID == 0 || mineID == 8 || mineID == 72 || mineID == 80) continue;
-        m_mineIDs->insert(mineID);
-    }
-    for(int mineID : *m_mineIDs) {
+    generateBombs(9, 9, 10);
+    for(const auto mineID : qAsConst(*m_mineIDs)) {
         (*m_buttonList)[mineID]->setCustomIcon(CustomPushButton::BOMB);
         (*m_buttonList)[mineID]->setIsMine(true);
         connect(m_buttonList->at(mineID), SIGNAL(clicked()), this, SLOT(bombClicked()));
@@ -217,6 +235,7 @@ void MainWindow::newEasyRound() {
     for(int i = 0; i < m_buttonList->size(); i++) {
         CustomPushButton* button = (*m_buttonList)[i];
         button->evaluateNeighbours();
+        if(confusion) button->confuse();
         if(button->role() == CustomPushButton::CLEAR) {
             connect(button, SIGNAL(clicked()), this, SLOT(disableClear()));
         }
@@ -226,17 +245,22 @@ void MainWindow::newEasyRound() {
 }
 
 //function that setups a new intermediate round
-void MainWindow::newIntermediateRound() {
+void MainWindow::newIntermediateRound(bool confusion, bool beginner) {
     //Widget Size
     QSize screenSize = QGuiApplication::primaryScreen()->availableGeometry().size() * 0.67;
     screenSize.setWidth(screenSize.height());
-    screenSize.setHeight(screenSize.height() * 1.25);
+    screenSize.setHeight(screenSize.height() * 1.2);
     setFixedSize(screenSize);
 
     screenSize.setHeight(screenSize.width() * 0.987);
     screenSize.setWidth(screenSize.width() * 0.987);
     ui->playWidget->setFixedSize(screenSize);
-    ui->horizontalSpacer->changeSize(screenSize.width() * 0.5, screenSize.height() * 0.05, QSizePolicy::Fixed);
+    ui->heartsLabel->setFixedSize(screenSize.width() * 0.4, screenSize.height() * 0.08);
+    if(!beginner) {
+        changeHearts(1, &screenSize);
+    } else {
+        changeHearts(3, &screenSize);
+    }
 
     //Button List
     //rows
@@ -293,15 +317,9 @@ void MainWindow::newIntermediateRound() {
     }
 
     //Random Bomb Generation
-    std::default_random_engine generator(rand());
-    std::uniform_int_distribution<int> chance(0,255);
-    while(m_mineIDs->size() != 40) {
-        int mineID = chance(generator);
-        //check for corners
-        if(mineID == 0 || mineID == 15 || mineID == 240 || mineID == 255) continue;
-        m_mineIDs->insert(mineID);
-    }
-    for(int mineID : *m_mineIDs) {
+    generateBombs(16, 16, 40);
+
+    for(const auto mineID : qAsConst(*m_mineIDs)) {
         (*m_buttonList)[mineID]->setCustomIcon(CustomPushButton::BOMB);
         (*m_buttonList)[mineID]->setIsMine(true);
         connect(m_buttonList->at(mineID), SIGNAL(clicked()), this, SLOT(bombClicked()));
@@ -309,17 +327,16 @@ void MainWindow::newIntermediateRound() {
     for(int i = 0; i < m_buttonList->size(); i++) {
         CustomPushButton* button = (*m_buttonList)[i];
         button->evaluateNeighbours();
+        if(confusion) button->confuse();
         if(button->role() == CustomPushButton::CLEAR) {
             connect(button, SIGNAL(clicked()), this, SLOT(disableClear()));
         }
     }
-
     ui->lcdNumber->display(40);
-
 }
 
 //function that setups a new hard round
-void MainWindow::newHardRound() {
+void MainWindow::newHardRound(bool confusion) {
 
     //Widget Size
     QSize screenSize = QGuiApplication::primaryScreen()->availableGeometry().size() * 0.67;
@@ -331,7 +348,8 @@ void MainWindow::newHardRound() {
     screenSize.setHeight((screenSize.width() / 1.875) * 0.987);
     screenSize.setWidth(screenSize.width() * 0.987);
     ui->playWidget->setFixedSize(screenSize);
-    ui->horizontalSpacer->changeSize(screenSize.width() * 0.75, screenSize.height() * 0.05, QSizePolicy::Fixed);
+    ui->heartsLabel->setFixedSize(screenSize.width() * 0.4, screenSize.height() * 0.16);
+    changeHearts(1, &screenSize);
 
     //Button List
     //rows
@@ -389,22 +407,17 @@ void MainWindow::newHardRound() {
     }
 
     //Random Bomb Generation
-    std::default_random_engine generator(rand());
-    std::uniform_int_distribution<int> chance(0,479);
-    while(m_mineIDs->size() != 99) {
-        int mineID = chance(generator);
-        //check for corners
-        if(mineID == 0 || mineID == 29 || mineID == 449 || mineID == 479) continue;
-        m_mineIDs->insert(mineID);
-    }
-    for(int mineID : *m_mineIDs) {
+    generateBombs(16, 30, 99);
+
+    for(const auto mineID : qAsConst(*m_mineIDs)) {
         (*m_buttonList)[mineID]->setCustomIcon(CustomPushButton::BOMB);
         (*m_buttonList)[mineID]->setIsMine(true);
         connect(m_buttonList->at(mineID), SIGNAL(clicked()), this, SLOT(bombClicked()));
     }
-    for(int i = 0; i < m_buttonList->size(); i++) {
+    for(auto i = 0; i < m_buttonList->size(); i++) {
         CustomPushButton* button = (*m_buttonList)[i];
         button->evaluateNeighbours();
+        if(confusion) button->confuse();
         if(button->role() == CustomPushButton::CLEAR) {
             connect(button, SIGNAL(clicked()), this, SLOT(disableClear()));
         }
@@ -414,102 +427,80 @@ void MainWindow::newHardRound() {
 
 }
 
-//function that setups a new confusion round
-void MainWindow::newConfusionRound() {
-    //Widget Size
-    QSize screenSize = QGuiApplication::primaryScreen()->availableGeometry().size() * 0.67;
-    screenSize.setWidth(screenSize.height());
-    screenSize.setHeight(screenSize.height() * 1.2);
-    setFixedSize(screenSize);
-
-    screenSize.setHeight(screenSize.width() * 0.987);
-    screenSize.setWidth(screenSize.width() * 0.987);
-    ui->playWidget->setFixedSize(screenSize);
-    ui->horizontalSpacer->changeSize(screenSize.width() * 0.5, screenSize.height() * 0.05, QSizePolicy::Fixed);
-
-    //Button List
-    //rows
-    for(int row = 0; row < 9 ; row++) {
-        //columns
-        for(int column = 0; column < 9; column ++){
-        CustomPushButton* button = new CustomPushButton(ui->playWidget);
-        button->setCustomIcon(CustomPushButton::CLEAR);
-        button->setGeometry(0, 0, ui->playWidget->size().height() / 9, ui->playWidget->size().width() / 9);
-        reinterpret_cast<QGridLayout*>(ui->playWidget->layout())->addWidget(button, row, column);
-        button->setFixedSize(ui->playWidget->size() / 9);
-        button->setMinimumSize(ui->playWidget->size() / 9);
-        button->setMaximumSize(ui->playWidget->size() / 9);
-        button->setIconSize(ui->playWidget->size() / 9);
-        m_buttonList->append(button);
-        }
-    }
-    //Add Neighbours to every button and connection
-    for(int i = 0; i < m_buttonList->size(); i++) {
-        QVector<int> vec = {-10,-9,-8,-1,1,8,9,10};
-        if(i < 9) {
-            vec.removeOne(-10);
-            vec.removeOne(-9);
-            vec.removeOne(-8);
-        } else if(i > 71) {
-            vec.removeOne(10);
-            vec.removeOne(9);
-            vec.removeOne(8);
-        }
-        if((i % 9) == 0) {
-            vec.removeOne(-10);
-            vec.removeOne(-1);
-            vec.removeOne(8);
-        } else if(((i + 1) % 9) == 0) {
-            vec.removeOne(10);
-            vec.removeOne(1);
-            vec.removeOne(-8);
-        }
-        for(int j : vec) {
-            (*m_buttonList)[i]->addNeighbour((*m_buttonList)[i + j]);
-        }
-        CustomPushButton* button = (*m_buttonList)[i];
-        connect(button, &QPushButton::customContextMenuRequested, [button]() {
-                    MainWindow* window = reinterpret_cast<MainWindow*>(button->parent()->parent()->parent());
-                    if(button->icon() == CustomPushButton::FLAG) {
-                        button->setCustomIcon(button->role());
-                        window->ui->lcdNumber->display(window->ui->lcdNumber->intValue() + 1);
-                    } else if(window->ui->lcdNumber->intValue() > 0){
-                       button->setCustomIcon(CustomPushButton::FLAG);
-                       window->ui->lcdNumber->display(window->ui->lcdNumber->intValue() - 1);
-                    }
-                });
-    }
-
-    //Random Bomb Generation
-    std::default_random_engine generator(rand());
-    std::uniform_int_distribution<int> chance(0,80);
-    while(m_mineIDs->size() != 10) {
-        int mineID = chance(generator);
-        //check for corners
-        if(mineID == 0 || mineID == 8 || mineID == 72 || mineID == 80) continue;
-        m_mineIDs->insert(mineID);
-    }
-    for(int mineID : *m_mineIDs) {
-        (*m_buttonList)[mineID]->setCustomIcon(CustomPushButton::BOMB);
-        (*m_buttonList)[mineID]->setIsMine(true);
-        connect(m_buttonList->at(mineID), SIGNAL(clicked()), this, SLOT(bombClicked()));
-    }
-    for(int i = 0; i < m_buttonList->size(); i++) {
-        CustomPushButton* button = (*m_buttonList)[i];
-        button->evaluateNeighbours();
-        button->confuse();
-        if(button->role() == CustomPushButton::CLEAR) {
-            connect(button, SIGNAL(clicked()), this, SLOT(disableClear()));
-        }
-    }
-
-    ui->lcdNumber->display(10);
-}
-
 //function that calculates the minimum required clicks to win
 int MainWindow::calculateB3V()
 {
     return 0;
+}
+
+//function that calculates the position of the bombs and stores it in the m_minesIDs vector
+void MainWindow::generateBombs(int rows, int columns, int bombs)
+{
+    std::vector<std::pair<int, int>> positions;
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+            positions.push_back(std::make_pair(i, j));
+        }
+    }
+    std::random_shuffle(positions.begin(), positions.end());
+
+    for(int i = 0; i < bombs; i++) {
+        m_mineIDs->push_back(positions[i].first * columns + positions[i].second);
+    }
+}
+
+//function that changes the visuals of the hearts label
+void MainWindow::changeHearts(int amount, QSize* screenSize)
+{
+    QPixmap pixmap0(":/ressources/0lives.png");
+    QPixmap pixmap1(":/ressources/1lives.png");
+    QPixmap pixmap2(":/ressources/2lives.png");
+    QPixmap pixmap3(":/ressources/3lives.png");
+    pixmap0.scaled(screenSize->width() * 0.4, screenSize->height() * 0.16, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    pixmap1.scaled(screenSize->width() * 0.4, screenSize->height() * 0.16, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    pixmap2.scaled(screenSize->width() * 0.4, screenSize->height() * 0.16, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    pixmap3.scaled(screenSize->width() * 0.4, screenSize->height() * 0.16, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    switch(amount) {
+    case 0:
+        ui->heartsLabel->setPixmap(pixmap0);
+        break;
+    case 1:
+        ui->heartsLabel->setPixmap(pixmap1);
+        break;
+    case 2:
+        ui->heartsLabel->setPixmap(pixmap2);
+        break;
+    case 3:
+        ui->heartsLabel->setPixmap(pixmap3);
+        break;
+    }
+}
+
+//function that changes the visuals of the hearts label
+void MainWindow::changeHearts(int amount)
+{
+    QPixmap pixmap0(":/ressources/0lives.png");
+    QPixmap pixmap1(":/ressources/1lives.png");
+    QPixmap pixmap2(":/ressources/2lives.png");
+    QPixmap pixmap3(":/ressources/3lives.png");
+    pixmap0.scaled(ui->heartsLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    pixmap1.scaled(ui->heartsLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    pixmap2.scaled(ui->heartsLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    pixmap3.scaled(ui->heartsLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    switch(amount) {
+    case 0:
+        ui->heartsLabel->setPixmap(pixmap0);
+        break;
+    case 1:
+        ui->heartsLabel->setPixmap(pixmap1);
+        break;
+    case 2:
+        ui->heartsLabel->setPixmap(pixmap2);
+        break;
+    case 3:
+        ui->heartsLabel->setPixmap(pixmap3);
+        break;
+    }
 }
 
 //function that updates the stats.json file
@@ -522,21 +513,27 @@ void MainWindow::updateStats()
 void MainWindow::showStats()
 {
 
-    StatsDialog dlg(m_statsTracker->easyStats(), m_statsTracker->intermediateStats(), m_statsTracker->hardStats(), m_statsTracker->confusionStats(), this);
+    StatsDialog dlg(m_statsTracker->easyStats(), m_statsTracker->intermediateStats(), m_statsTracker->hardStats(), m_statsTracker->confusionEasyStats(), m_statsTracker->confusionIntermediateStats(), m_statsTracker->confusionHardStats(), this);
     dlg.exec();
 }
 
 //slot that gets accessed, when a mine gets clicked
 void MainWindow::bombClicked() {
-    m_statsTracker->roundsPlayedUpdate(m_currentMode, false, m_currentRoundPlaytime);
-    for(int i = 0; i < m_buttonList->size(); i++) {
-        CustomPushButton* button = (*m_buttonList)[i];
-        if(!button->isMine() && button->icon() == CustomPushButton::FLAG) button->setCustomIcon(button->role());
+    if(m_hearts == 1) {
+        m_statsTracker->roundsPlayedUpdate(m_currentMode, false, m_currentRoundPlaytime);
+        for(int i = 0; i < m_buttonList->size(); i++) {
+            CustomPushButton* button = (*m_buttonList)[i];
+            if(!button->isMine() && button->icon() == CustomPushButton::FLAG) button->setCustomIcon(button->role());
+        }
+        ui->playWidget->setEnabled(false);
+        m_timer->stop();
+        ui->actionReset->setVisible(true);
+        ui->actionShow_Result->setEnabled(false);
+        ui->actionItems->setEnabled(false);
     }
-    ui->playWidget->setEnabled(false);
-    m_timer->stop();
-    ui->actionReset->setVisible(true);
-    ui->actionShow_Result->setEnabled(false);
+
+    m_hearts -= 1;
+    changeHearts(m_hearts);
 }
 
 //slot that gets accessed, when the reset button is clicked
@@ -566,6 +563,8 @@ void MainWindow::reset() {
     setFixedSize(screenSize);
     ui->menubar->setVisible(false);
     m_menuImage->setVisible(true);
+    ui->heartsLabel->clear();
+    m_hearts = 1;
 }
 
 //function that floodfills all the clear buttons
