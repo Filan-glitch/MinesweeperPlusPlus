@@ -20,16 +20,19 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         statsdialog.cpp
         statstracker.cpp
+        trolldialog.cpp
         aboutdialog.h
         custompushbutton.h
         gamechoicedialog.h
         mainwindow.h
         statsdialog.h
         statstracker.h
+        trolldialog.h
         aboutdialog.ui
         gamechoicedialog.ui
         mainwindow.ui
         statsdialog.ui
+        trolldialog.ui
         Icons.qrc
 )
 

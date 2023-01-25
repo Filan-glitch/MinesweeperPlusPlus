@@ -68,6 +68,6 @@ private slots:
     void updateStats();
     void showStats();
     void startMenu();
-
+    void trollHelp();
 };
 #endif // MAINWINDOW_H

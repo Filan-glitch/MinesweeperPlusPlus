@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 #include "statsdialog.h"
 #include "aboutdialog.h"
+#include "trolldialog.h"
 
 
 //Constructor
@@ -30,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionShow_Result, SIGNAL(triggered()), this, SLOT(bombClicked()));
     connect(ui->actionStatistics, SIGNAL(triggered()), this, SLOT(showStats()));
     connect(m_timer, SIGNAL(timeout()), this, SLOT(checkWin()));
+    connect(ui->actionI_need_help, SIGNAL(triggered()), this, SLOT(trollHelp()));
 
     //Widget
     QSize screenSize = QGuiApplication::primaryScreen()->availableGeometry().size() * 0.67;
@@ -591,6 +593,12 @@ void MainWindow::disableClear() {
 //function that executes the about dialog
 void MainWindow::about() {
     aboutDialog dlg(this);
+    dlg.exec();
+}
+
+//function that executes the troll dialog
+void MainWindow::trollHelp() {
+    TrollDialog dlg(this);
     dlg.exec();
 }
 
