@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_mineIDs = new QVector<int>;
     m_buttonList = new QList<CustomPushButton*>;
     m_disabledButtonIDsList = new QSet<int>;
+    m_markedButtonIDsList = new QSet<int>;
     m_statsTracker = new StatsTracker;
 
     //Timer
@@ -62,7 +63,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     //Initial State
     ui->centralwidget->setVisible(false);
-    ui->actionReset->setVisible(false);
     ui->actionShow_Result->setEnabled(false);
     ui->menubar->setVisible(false);
 
@@ -92,7 +92,6 @@ void MainWindow::startRound(GameChoiceDialog::Choice choice) {
     ui->centralwidget->setVisible(true);
     ui->playWidget->setVisible(true);
     ui->playWidget->setEnabled(true);
-    ui->actionReset->setVisible(true);
     ui->actionShow_Result->setEnabled(true);
     ui->actionItems->setEnabled(true);
     switch(choice) {
@@ -225,6 +224,7 @@ void MainWindow::newEasyRound(bool confusion, bool beginner) {
                     }
                 });
         connect(button, SIGNAL(start()), this, SLOT(start()));
+        connect(button, SIGNAL(clicked()), this, SLOT(addClick()));
     }
 
     //Random Bomb Generation
@@ -234,15 +234,15 @@ void MainWindow::newEasyRound(bool confusion, bool beginner) {
         (*m_buttonList)[mineID]->setIsMine(true);
         connect(m_buttonList->at(mineID), SIGNAL(clicked()), this, SLOT(bombClicked()));
     }
-    for(int i = 0; i < m_buttonList->size(); i++) {
+    for(auto i = 0; i < m_buttonList->size(); i++) {
         CustomPushButton* button = (*m_buttonList)[i];
         button->evaluateNeighbours();
         if(confusion) button->confuse();
-        if(button->role() == CustomPushButton::CLEAR) {
+        if(!button->isMine()) {
             connect(button, SIGNAL(clicked()), this, SLOT(disableClear()));
         }
     }
-
+    calculate3BV();
     ui->lcdNumber->display(10);
 }
 
@@ -317,6 +317,7 @@ void MainWindow::newIntermediateRound(bool confusion, bool beginner) {
                     }
                 });
         connect(button, SIGNAL(start()), this, SLOT(start()));
+        connect(button, SIGNAL(clicked()), this, SLOT(addClick()));
     }
 
     //Random Bomb Generation
@@ -331,10 +332,11 @@ void MainWindow::newIntermediateRound(bool confusion, bool beginner) {
         CustomPushButton* button = (*m_buttonList)[i];
         button->evaluateNeighbours();
         if(confusion) button->confuse();
-        if(button->role() == CustomPushButton::CLEAR) {
+        if(!button->isMine()) {
             connect(button, SIGNAL(clicked()), this, SLOT(disableClear()));
         }
     }
+    calculate3BV();
     ui->lcdNumber->display(40);
 }
 
@@ -408,6 +410,7 @@ void MainWindow::newHardRound(bool confusion) {
                     }
                 });
         connect(button, SIGNAL(start()), this, SLOT(start()));
+        connect(button, SIGNAL(clicked()), this, SLOT(addClick()));
     }
 
     //Random Bomb Generation
@@ -422,19 +425,56 @@ void MainWindow::newHardRound(bool confusion) {
         CustomPushButton* button = (*m_buttonList)[i];
         button->evaluateNeighbours();
         if(confusion) button->confuse();
-        if(button->role() == CustomPushButton::CLEAR) {
+        if(!button->isMine()) {
             connect(button, SIGNAL(clicked()), this, SLOT(disableClear()));
         }
     }
-
+    calculate3BV();
     ui->lcdNumber->display(99);
 
 }
 
 //function that calculates the minimum required clicks to win
-int MainWindow::calculateB3V()
+void MainWindow::calculate3BV()
 {
-    return 0;
+    int sizeMarkedIDs = 0;
+    //calculating the clear buttons 3bv
+    do {
+        sizeMarkedIDs = m_markedButtonIDsList->size();
+        calculateClear3BV();
+    } while(sizeMarkedIDs < m_markedButtonIDsList->size());
+
+    for(int i = 0; i < m_buttonList->size(); i++) {
+        CustomPushButton* button = (*m_buttonList)[i];
+        if(!button->isMarked() && !button->isMine()) {
+            button->setIsMarked(true);
+            m_3bv++;
+        }
+    }
+}
+
+//function that calculates the 3bv for the clear buttons and their neighbours
+void MainWindow::calculateClear3BV() {
+    //calculating the clear buttons 3bv
+    for(int i = 0; i < m_buttonList->size(); i++) {
+        CustomPushButton* button = (*m_buttonList)[i];
+        if(!button->isMarked() &&
+            button->role() == CustomPushButton::CLEAR &&
+            !m_markedButtonIDsList->contains(i)) {
+            button->setIsMarked(true);
+            button->markNeighbours();
+            m_3bv++;
+            break;
+        }
+    }
+
+    //Adding all new marked buttons
+    for(int i = 0; i < m_buttonList->size(); i++) {
+        CustomPushButton* button = (*m_buttonList)[i];
+        if(button->isMarked()) {
+            m_markedButtonIDsList->insert(i);
+        }
+    }
 }
 
 //function that calculates the position of the bombs and stores it in the m_minesIDs vector
@@ -533,7 +573,6 @@ void MainWindow::bombClicked() {
         }
         ui->playWidget->setEnabled(false);
         m_timer->stop();
-        ui->actionReset->setVisible(true);
         ui->actionShow_Result->setEnabled(false);
         ui->actionItems->setEnabled(false);
         m_roundEnded = true;
@@ -561,8 +600,8 @@ void MainWindow::reset() {
     ui->lcdNumber->display(0);
     ui->lcdTimer->display("00:00");
     ui->actionShow_Result->setEnabled(false);
-    ui->actionReset->setVisible(false);
     m_disabledButtonIDsList->clear();
+    m_markedButtonIDsList->clear();
     m_currentRoundPlaytime = 0;
     QSize screenSize = QGuiApplication::primaryScreen()->availableGeometry().size() * 0.67;
     screenSize.setWidth(screenSize.height());
@@ -574,6 +613,9 @@ void MainWindow::reset() {
     m_hearts = 1;
     m_started = false;
     m_roundEnded = false;
+    m_3bv = 0;
+    m_clicks = 0;
+    m_goldenFlagsUsed = 0;
 }
 
 //function that floodfills all the clear buttons
@@ -618,25 +660,28 @@ void MainWindow::items()
 
 //function that checks, if the round is correctly won
 void MainWindow::checkWin() {
-    int counter = 0;
-    for(int mineID : *m_mineIDs) {
-        CustomPushButton* button = (*m_buttonList)[mineID];
-        if(button->icon() == CustomPushButton::FLAG) {
-            counter++;
-        }
-    }
-    if ((counter == 10 || counter == 40 || counter == 99) && ui->lcdNumber->value() == 0) {
-        m_statsTracker->roundsPlayedUpdate(m_currentMode, true, m_currentRoundPlaytime);
+    if ((m_currentMode == GameChoiceDialog::EASY && m_disabledButtonIDsList->size() == (71 + m_goldenFlagsUsed)) ||
+        (m_currentMode == GameChoiceDialog::CONFUSION1 && m_disabledButtonIDsList->size() == (71 + m_goldenFlagsUsed)) ||
+        (m_currentMode == GameChoiceDialog::BEGINNER1 && m_disabledButtonIDsList->size() == (71 + m_goldenFlagsUsed)) ||
+            (m_currentMode == GameChoiceDialog::INTERMEDIATE && m_disabledButtonIDsList->size() == (216 + m_goldenFlagsUsed)) ||
+            (m_currentMode == GameChoiceDialog::CONFUSION2 && m_disabledButtonIDsList->size() == (216 + m_goldenFlagsUsed)) ||
+            (m_currentMode == GameChoiceDialog::BEGINNER2 && m_disabledButtonIDsList->size() == (216 + m_goldenFlagsUsed)) ||
+            (m_currentMode == GameChoiceDialog::HARD && m_disabledButtonIDsList->size() == (381 + m_goldenFlagsUsed)) ||
+            (m_currentMode == GameChoiceDialog::CONFUSION3 && m_disabledButtonIDsList->size() == (381 + m_goldenFlagsUsed))) {
         ui->playWidget->setEnabled(false);
+        ui->actionItems->setEnabled(false);
+        ui->actionShow_Result->setEnabled(false);
         m_timer->stop();
+        double efficiency = calculateEfficiency();
         QMessageBox dlg(this);
         dlg.setWindowTitle("Win Screen");
         dlg.setWindowIcon(QIcon(":/ressources/minesweeper_logo.png"));
-        dlg.setText("You have won!");
+        dlg.setText("You have won!\n3BV was: " + QString::number(m_3bv) + "\nYou needed: " + QString::number(m_clicks) + "\nEfficiency: " + QString::number(efficiency));
+        m_statsTracker->roundsPlayedUpdate(m_currentMode, true, m_currentRoundPlaytime, efficiency);
         dlg.setIcon(QMessageBox::Information);
         dlg.exec();
+        m_roundEnded = true;
     }
-    m_roundEnded = true;
 }
 
 //function that reacts to Start Menu clicked
@@ -672,11 +717,47 @@ void MainWindow::obtainGoldenFlag() {
 
 //function that uses a golden flag
 void MainWindow::useGoldenFlag() {
-    default_random_engine generator;
+    default_random_engine generator(rand());
     uniform_int_distribution<int> possibleIDs(0, m_mineIDs->size()-1);
-    int id = possibleIDs(generator);
+    int id;
+    do {
+    id = possibleIDs(generator);
+    } while (((*m_buttonList)[m_mineIDs->at(id)])->icon() == CustomPushButton::FLAG);
+
     ((*m_buttonList)[m_mineIDs->at(id)])->setCustomIcon(CustomPushButton::GOLD);
     ((*m_buttonList)[m_mineIDs->at(id)])->setEnabled(false);
     ((*m_buttonList)[m_mineIDs->at(id)])->disableNeighbours();
     ui->lcdNumber->display(ui->lcdNumber->intValue() - 1);
+    m_goldenFlagsUsed++;
+}
+
+//function that adds a click
+void MainWindow::addClick() {
+    m_clicks++;
+}
+
+//function that calculates the efficiency
+double MainWindow::calculateEfficiency() {
+    switch(m_currentMode) {
+    case GameChoiceDialog::EASY:
+    case GameChoiceDialog::CONFUSION1:
+    case GameChoiceDialog::BEGINNER1: {
+        int maxAmountOfClickDifference = 71 - m_3bv;
+        double efficiency = static_cast<double>((71 - m_clicks)) / maxAmountOfClickDifference;
+        return efficiency;
+    }
+    case GameChoiceDialog::INTERMEDIATE:
+    case GameChoiceDialog::CONFUSION2:
+    case GameChoiceDialog::BEGINNER2: {
+        int maxAmountOfClickDifference = 216 - m_3bv;
+        double efficiency = static_cast<double>((216 - m_clicks)) / maxAmountOfClickDifference;
+        return efficiency;
+    }
+    case GameChoiceDialog::HARD:
+    case GameChoiceDialog::CONFUSION3: {
+        int maxAmountOfClickDifference = 381 - m_3bv;
+        double efficiency = static_cast<double>((381 - m_clicks)) / maxAmountOfClickDifference;
+        return efficiency;
+    }
+    }
 }

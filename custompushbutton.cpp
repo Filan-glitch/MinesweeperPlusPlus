@@ -185,6 +185,18 @@ void CustomPushButton::disableNeighbours()
     }
 }
 
+void CustomPushButton::markNeighbours()
+{
+    for(CustomPushButton* neighbour : *m_neighbours) {
+        if(!neighbour->isMarked()){
+            neighbour->setIsMarked(true);
+            if(neighbour->icon() == CLEAR) {
+                neighbour->markNeighbours();
+            }
+        }
+    }
+}
+
 //getter for the icon
 CustomPushButton::Icon CustomPushButton::icon() const
 {
@@ -195,6 +207,18 @@ CustomPushButton::Icon CustomPushButton::icon() const
 CustomPushButton::Icon CustomPushButton::role() const
 {
     return m_role;
+}
+
+//getter for marked
+bool CustomPushButton::isMarked() const
+{
+    return m_isMarked;
+}
+
+//setter for marked
+void CustomPushButton::setIsMarked(bool newIsMarked)
+{
+    m_isMarked = newIsMarked;
 }
 
 //overridden function to check right click event to set flags

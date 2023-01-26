@@ -27,7 +27,7 @@ public:
     QJsonObject confusionIntermediateStats() const;
     QJsonObject confusionHardStats() const;
     QJsonObject amountGoldenFlags() const;
-    void roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win, int time, float efficiency = 0.0f);
+    void roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win, int time, double efficiency = 0.0f);
     void addGoldenFlag();
     void useGoldenFlag();
 

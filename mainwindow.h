@@ -43,6 +43,7 @@ private:
     QTime* m_time;
     QList<CustomPushButton*>* m_buttonList;
     QSet<int>* m_disabledButtonIDsList;
+    QSet<int>* m_markedButtonIDsList;
     QVector<int>* m_mineIDs;
     QPushButton* m_menuImage;
     GameChoiceDialog::Choice m_currentMode;
@@ -51,12 +52,16 @@ private:
     int m_hearts = 1;
     bool m_started = false;
     bool m_roundEnded = false;
+    int m_3bv = 0;
+    int m_goldenFlagsUsed = 0;
 
     void startRound(GameChoiceDialog::Choice choice);
     void newEasyRound(bool confusion, bool beginner);
     void newIntermediateRound(bool confusion, bool beginner);
     void newHardRound(bool confusion);
-    int calculateB3V();
+    void calculate3BV();
+    void calculateClear3BV();
+    double calculateEfficiency();
     void generateBombs(int rows, int columns, int bombs);
     void changeHearts(int amount, QSize* screenSize);
     void changeHearts(int amount);
@@ -74,5 +79,6 @@ private slots:
     void showStats();
     void startMenu();
     void start();
+    void addClick();
 };
 #endif // MAINWINDOW_H

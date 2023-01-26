@@ -152,13 +152,14 @@ QJsonObject StatsTracker::confusionHardStats() const
 }
 
 //function that updates wins/loses, best time and efficiency
-void StatsTracker::roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win, int time, float efficiency)
+void StatsTracker::roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win, int time, double efficiency)
 {
     switch(choice) {
     case GameChoiceDialog::EASY:
         m_easyStats["Total Time"] = m_easyStats["Total Time"].toInt() + time;
         if(win) {
             m_easyStats["Wins"] = m_easyStats["Wins"].toInt() + 1;
+            m_easyStats["Efficiency"] = (m_easyStats["Efficiency"].toDouble() + efficiency) / m_easyStats["Wins"].toInt();
 
             if(m_easyStats["Best Time"] == QJsonValue()) {
                 m_easyStats["Best Time"] = time;
@@ -167,12 +168,14 @@ void StatsTracker::roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win,
             if(time < m_easyStats["Best Time"].toInt()) {
                 m_easyStats["Best Time"] = time;
             }
+
         } else {
             m_easyStats["Loses"] = m_easyStats["Loses"].toInt() + 1;
         }
         break;
     case GameChoiceDialog::INTERMEDIATE:
         m_intermediateStats["Total Time"] = m_intermediateStats["Total Time"].toInt() + time;
+        m_intermediateStats["Efficiency"] = (m_intermediateStats["Efficiency"].toDouble() + efficiency) / m_intermediateStats["Wins"].toInt();
         if(win) {
             m_intermediateStats["Wins"] = m_intermediateStats["Wins"].toInt() + 1;
 
@@ -183,12 +186,14 @@ void StatsTracker::roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win,
             if(time < m_intermediateStats["Best Time"].toInt()) {
                 m_intermediateStats["Best Time"] = time;
             }
+
         } else {
             m_intermediateStats["Loses"] = m_intermediateStats["Loses"].toInt() + 1;
         }
         break;
     case GameChoiceDialog::HARD:
         m_hardStats["Total Time"] = m_hardStats["Total Time"].toInt() + time;
+        m_hardStats["Efficiency"] = (m_hardStats["Efficiency"].toDouble() + efficiency) / m_hardStats["Wins"].toInt();
         if(win) {
             m_hardStats["Wins"] = m_hardStats["Wins"].toInt() + 1;
 
@@ -200,12 +205,14 @@ void StatsTracker::roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win,
             if(time < m_hardStats["Best Time"].toInt()) {
                 m_hardStats["Best Time"] = time;
             }
+
         } else {
             m_hardStats["Loses"] = m_hardStats["Loses"].toInt() + 1;
         }
         break;
     case GameChoiceDialog::CONFUSION1:
         m_confusionEasyStats["Total Time"] = m_confusionEasyStats["Total Time"].toInt() + time;
+        m_confusionEasyStats["Efficiency"] = (m_confusionEasyStats["Efficiency"].toDouble() + efficiency) / m_confusionEasyStats["Wins"].toInt();
         if(win) {
             m_confusionEasyStats["Wins"] = m_confusionEasyStats["Wins"].toInt() + 1;
 
@@ -216,12 +223,14 @@ void StatsTracker::roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win,
             if(time < m_confusionEasyStats["Best Time"].toInt()) {
                 m_confusionEasyStats["Best Time"] = time;
             }
+
         } else {
             m_confusionEasyStats["Loses"] = m_confusionEasyStats["Loses"].toInt() + 1;
         }
         break;
     case GameChoiceDialog::CONFUSION2:
         m_confusionIntermediateStats["Total Time"] = m_confusionIntermediateStats["Total Time"].toInt() + time;
+        m_confusionIntermediateStats["Efficiency"] = (m_confusionIntermediateStats["Efficiency"].toDouble() + efficiency) / m_confusionIntermediateStats["Wins"].toInt();
         if(win) {
             m_confusionIntermediateStats["Wins"] = m_confusionIntermediateStats["Wins"].toInt() + 1;
 
@@ -232,6 +241,7 @@ void StatsTracker::roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win,
             if(time < m_confusionIntermediateStats["Best Time"].toInt()) {
                 m_confusionIntermediateStats["Best Time"] = time;
             }
+
         } else {
             m_confusionIntermediateStats["Loses"] = m_confusionIntermediateStats["Loses"].toInt() + 1;
         }
@@ -240,6 +250,7 @@ void StatsTracker::roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win,
         m_confusionHardStats["Total Time"] = m_confusionHardStats["Total Time"].toInt() + time;
         if(win) {
             m_confusionHardStats["Wins"] = m_confusionHardStats["Wins"].toInt() + 1;
+            m_confusionHardStats["Efficiency"] = (m_confusionHardStats["Efficiency"].toDouble() + efficiency) / m_confusionHardStats["Wins"].toInt();
 
             if(m_confusionHardStats["Best Time"] == QJsonValue()) {
                 m_confusionHardStats["Best Time"] = time;

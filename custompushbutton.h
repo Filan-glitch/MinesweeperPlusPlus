@@ -23,12 +23,17 @@ public:
 
     void disableNeighbours();
 
+    void markNeighbours();
+
     void confuse();
 
     Icon icon() const;
 
     Icon role() const;
 
+
+    bool isMarked() const;
+    void setIsMarked(bool newIsMarked);
 
 private:
     QVector<CustomPushButton*>* m_neighbours;
