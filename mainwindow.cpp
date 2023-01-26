@@ -759,5 +759,7 @@ double MainWindow::calculateEfficiency() {
         double efficiency = static_cast<double>((381 - m_clicks)) / maxAmountOfClickDifference;
         return efficiency;
     }
+    default:
+        return 0;
     }
 }
