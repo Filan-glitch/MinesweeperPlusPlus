@@ -63,6 +63,9 @@ void StatsTracker::readStats()
                        \"Mode\": \"ConfusionHard\",\
                        \"Total Time\": null,\
                        \"Wins\": null\
+                   },\
+                   {\
+                       \"Golden Flags\": null\
                    }\
                ]");
         qDebug() << "File was not found and therefor created.";
@@ -82,6 +85,7 @@ void StatsTracker::readStats()
     m_confusionEasyStats = jsonArray[3].toObject();
     m_confusionIntermediateStats = jsonArray[4].toObject();
     m_confusionHardStats = jsonArray[5].toObject();
+    m_amountGoldenFlags = jsonArray[6].toObject();
 }
 
 //function that writes the updated data members to the stats.json file
@@ -91,7 +95,7 @@ void StatsTracker::writeStats()
     QFile file("stats.json");
 
     //deleting old data
-    file.moveToTrash();
+    file.resize(0);
 
     //Writing data
     QJsonArray jsonArray;
@@ -101,6 +105,7 @@ void StatsTracker::writeStats()
     jsonArray.append(m_confusionEasyStats);
     jsonArray.append(m_confusionIntermediateStats);
     jsonArray.append(m_confusionHardStats);
+    jsonArray.append(m_amountGoldenFlags);
 
     QJsonDocument jsonDoc;
     jsonDoc.setArray(jsonArray);
@@ -252,8 +257,24 @@ void StatsTracker::roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win,
     }
 }
 
+//getter for amount of golden flags
+QJsonObject StatsTracker::amountGoldenFlags() const
+{
+    return m_amountGoldenFlags;
+}
+
+//function that adds a golden flag
+void StatsTracker::addGoldenFlag() {
+    m_amountGoldenFlags["Golden Flags"] = QJsonValue(m_amountGoldenFlags["Golden Flags"].toInt() + 1);
+}
+
+//function that uses a golden flag
+void StatsTracker::useGoldenFlag() {
+    if(m_amountGoldenFlags["Golden Flags"] != QJsonValue()) m_amountGoldenFlags["Golden Flags"] = QJsonValue(m_amountGoldenFlags["Golden Flags"].toInt() - 1);
+}
+
 //function that resets the intern and extern stats
-void StatsTracker::resetStats()
+void StatsTracker::resetStats(bool resetGoldenFlags)
 {
     //Data handling with stats.json file
     QFile file("stats.json");
@@ -311,6 +332,9 @@ void StatsTracker::resetStats()
                    \"Mode\": \"ConfusionHard\",\
                    \"Total Time\": null,\
                    \"Wins\": null\
+               },\
+               {\
+                   \"Golden Flags\": null\
                }\
            ]");
     qDebug() << "Statistics were resetted.";
@@ -352,5 +376,7 @@ void StatsTracker::resetStats()
     m_confusionHardStats["Wins"] = QJsonValue();
     m_confusionHardStats["Loses"] = QJsonValue();
     m_confusionHardStats["Efficiency"] = QJsonValue();
+
+    if(resetGoldenFlags) m_amountGoldenFlags["Golden Flags"] = QJsonValue();
 }
 

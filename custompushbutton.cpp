@@ -95,6 +95,13 @@ void CustomPushButton::setCustomIcon(Icon icon)
         m_icon = FLAG;
         break;
     }
+    case GOLD: {
+        QIcon iconFlag(":/ressources/G.png");
+        iconFlag.addFile(":/ressources/G.png", QSize(64,64), QIcon::Disabled, QIcon::Off);
+        this->setIcon(iconFlag);
+        m_icon = FLAG;
+        break;
+    }
     default: {
         QIcon iconFlag(":/ressources/clear.png");
     }
@@ -204,6 +211,7 @@ void CustomPushButton::mousePressEvent(QMouseEvent *event)
         }
         emit clicked();
     }
+    emit start();
 }
 
 //function that swaps specific icons to confuse

@@ -19,6 +19,7 @@ public:
 
 private slots:
     void on_pushButtonReset_clicked();
+    void reset();
 
 private:
     Ui::StatsDialog *ui;

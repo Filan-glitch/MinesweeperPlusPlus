@@ -31,136 +31,40 @@ GameChoiceDialog::Choice GameChoiceDialog::getChoice() const
 
 void GameChoiceDialog::easyClicked(bool checked)
 {
-    if(!checked) {
-        ui->radio_easy->setChecked(true);
-        return;
-    }
-    ui->radio_intermediate->setChecked(false);
-    ui->radio_hard->setChecked(false);
-    ui->radio_confusionEasy->setChecked(false);
-    ui->radio_confusionIntermediate->setChecked(false);
-    ui->radio_confusionHard->setChecked(false);
-    ui->radio_beginnerEasy->setChecked(false);
-    ui->radio_beginnerIntermediate->setChecked(false);
-    ui->buttonBox->setEnabled(true);
     m_choice = EASY;
 }
 
 void GameChoiceDialog::intermediateClicked(bool checked)
 {
-    if(!checked) {
-        ui->radio_intermediate->setChecked(true);
-        return;
-    }
-    ui->radio_easy->setChecked(false);
-    ui->radio_hard->setChecked(false);
-    ui->radio_confusionEasy->setChecked(false);
-    ui->radio_confusionIntermediate->setChecked(false);
-    ui->radio_confusionHard->setChecked(false);
-    ui->radio_beginnerEasy->setChecked(false);
-    ui->radio_beginnerIntermediate->setChecked(false);
-    ui->buttonBox->setEnabled(true);
     m_choice = INTERMEDIATE;
 }
 
 void GameChoiceDialog::hardClicked(bool checked)
 {
-    if(!checked) {
-        ui->radio_hard->setChecked(true);
-        return;
-    }
-    ui->radio_easy->setChecked(false);
-    ui->radio_intermediate->setChecked(false);
-    ui->radio_confusionEasy->setChecked(false);
-    ui->radio_confusionIntermediate->setChecked(false);
-    ui->radio_confusionHard->setChecked(false);
-    ui->radio_beginnerEasy->setChecked(false);
-    ui->radio_beginnerIntermediate->setChecked(false);
-    ui->buttonBox->setEnabled(true);
     m_choice = HARD;
 }
 
 void GameChoiceDialog::confusionEasyClicked(bool checked)
 {
-    if(!checked) {
-        ui->radio_confusionEasy->setChecked(true);
-        return;
-    }
-    ui->radio_easy->setChecked(false);
-    ui->radio_intermediate->setChecked(false);
-    ui->radio_hard->setChecked(false);
-    ui->radio_confusionIntermediate->setChecked(false);
-    ui->radio_confusionHard->setChecked(false);
-    ui->radio_beginnerEasy->setChecked(false);
-    ui->radio_beginnerIntermediate->setChecked(false);
-    ui->buttonBox->setEnabled(true);
     m_choice = CONFUSION1;
 }
 
 void GameChoiceDialog::confusionIntermediateClicked(bool checked)
 {
-    if(!checked) {
-        ui->radio_confusionIntermediate->setChecked(true);
-        return;
-    }
-    ui->radio_easy->setChecked(false);
-    ui->radio_intermediate->setChecked(false);
-    ui->radio_hard->setChecked(false);
-    ui->radio_confusionEasy->setChecked(false);
-    ui->radio_confusionHard->setChecked(false);
-    ui->radio_beginnerEasy->setChecked(false);
-    ui->radio_beginnerIntermediate->setChecked(false);
-    ui->buttonBox->setEnabled(true);
     m_choice = CONFUSION2;
 }
 
 void GameChoiceDialog::confusionHardClicked(bool checked)
 {
-    if(!checked) {
-        ui->radio_confusionHard->setChecked(true);
-        return;
-    }
-    ui->radio_easy->setChecked(false);
-    ui->radio_intermediate->setChecked(false);
-    ui->radio_hard->setChecked(false);
-    ui->radio_confusionEasy->setChecked(false);
-    ui->radio_confusionIntermediate->setChecked(false);
-    ui->radio_beginnerEasy->setChecked(false);
-    ui->radio_beginnerIntermediate->setChecked(false);
-    ui->buttonBox->setEnabled(true);
     m_choice = CONFUSION3;
 }
 
 void GameChoiceDialog::beginnerEasyClicked(bool checked)
 {
-    if(!checked) {
-        ui->radio_beginnerEasy->setChecked(true);
-        return;
-    }
-    ui->radio_easy->setChecked(false);
-    ui->radio_intermediate->setChecked(false);
-    ui->radio_hard->setChecked(false);
-    ui->radio_confusionEasy->setChecked(false);
-    ui->radio_confusionIntermediate->setChecked(false);
-    ui->radio_confusionHard->setChecked(false);
-    ui->radio_beginnerIntermediate->setChecked(false);
-    ui->buttonBox->setEnabled(true);
     m_choice = BEGINNER1;
 }
 
 void GameChoiceDialog::beginnerIntermediateClicked(bool checked)
 {
-    if(!checked) {
-        ui->radio_beginnerIntermediate->setChecked(true);
-        return;
-    }
-    ui->radio_easy->setChecked(false);
-    ui->radio_intermediate->setChecked(false);
-    ui->radio_hard->setChecked(false);
-    ui->radio_confusionEasy->setChecked(false);
-    ui->radio_confusionIntermediate->setChecked(false);
-    ui->radio_confusionHard->setChecked(false);
-    ui->radio_beginnerEasy->setChecked(false);
-    ui->buttonBox->setEnabled(true);
     m_choice = BEGINNER2;
 }

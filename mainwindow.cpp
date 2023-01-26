@@ -2,8 +2,7 @@
 #include "./ui_mainwindow.h"
 #include "statsdialog.h"
 #include "aboutdialog.h"
-#include "trolldialog.h"
-
+#include "itemsdialog.h"
 
 //Constructor
 MainWindow::MainWindow(QWidget *parent)
@@ -30,8 +29,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     connect(ui->actionShow_Result, SIGNAL(triggered()), this, SLOT(bombClicked()));
     connect(ui->actionStatistics, SIGNAL(triggered()), this, SLOT(showStats()));
+    connect(ui->actionItems, SIGNAL(triggered()), this, SLOT(items()));
     connect(m_timer, SIGNAL(timeout()), this, SLOT(checkWin()));
-    connect(ui->actionI_need_help, SIGNAL(triggered()), this, SLOT(trollHelp()));
+
 
     //Widget
     QSize screenSize = QGuiApplication::primaryScreen()->availableGeometry().size() * 0.67;
@@ -89,7 +89,6 @@ void MainWindow::setCurrentMode(GameChoiceDialog::Choice newCurrentMode)
 
 //Function to start the round, enables the wanted widget and activates all needed modules
 void MainWindow::startRound(GameChoiceDialog::Choice choice) {
-    m_timer->start(1000);
     ui->centralwidget->setVisible(true);
     ui->playWidget->setVisible(true);
     ui->playWidget->setEnabled(true);
@@ -225,6 +224,7 @@ void MainWindow::newEasyRound(bool confusion, bool beginner) {
                        window->ui->lcdNumber->display(window->ui->lcdNumber->intValue() - 1);
                     }
                 });
+        connect(button, SIGNAL(start()), this, SLOT(start()));
     }
 
     //Random Bomb Generation
@@ -316,6 +316,7 @@ void MainWindow::newIntermediateRound(bool confusion, bool beginner) {
                        window->ui->lcdNumber->display(window->ui->lcdNumber->intValue() - 1);
                     }
                 });
+        connect(button, SIGNAL(start()), this, SLOT(start()));
     }
 
     //Random Bomb Generation
@@ -406,6 +407,7 @@ void MainWindow::newHardRound(bool confusion) {
                        window->ui->lcdNumber->display(window->ui->lcdNumber->intValue() - 1);
                     }
                 });
+        connect(button, SIGNAL(start()), this, SLOT(start()));
     }
 
     //Random Bomb Generation
@@ -514,9 +516,11 @@ void MainWindow::updateStats()
 //function that executes the stats dialog
 void MainWindow::showStats()
 {
-
+    bool wasActive = m_timer->isActive();
+    if(wasActive) m_timer->stop();
     StatsDialog dlg(m_statsTracker->easyStats(), m_statsTracker->intermediateStats(), m_statsTracker->hardStats(), m_statsTracker->confusionEasyStats(), m_statsTracker->confusionIntermediateStats(), m_statsTracker->confusionHardStats(), this);
     dlg.exec();
+    if(wasActive) m_timer->start(1000);
 }
 
 //slot that gets accessed, when a mine gets clicked
@@ -532,8 +536,9 @@ void MainWindow::bombClicked() {
         ui->actionReset->setVisible(true);
         ui->actionShow_Result->setEnabled(false);
         ui->actionItems->setEnabled(false);
+        m_roundEnded = true;
+        if(!m_started) obtainGoldenFlag();
     }
-
     m_hearts -= 1;
     changeHearts(m_hearts);
 }
@@ -567,6 +572,8 @@ void MainWindow::reset() {
     m_menuImage->setVisible(true);
     ui->heartsLabel->clear();
     m_hearts = 1;
+    m_started = false;
+    m_roundEnded = false;
 }
 
 //function that floodfills all the clear buttons
@@ -592,14 +599,21 @@ void MainWindow::disableClear() {
 
 //function that executes the about dialog
 void MainWindow::about() {
+    bool wasActive = m_timer->isActive();
+    if(wasActive) m_timer->stop();
     aboutDialog dlg(this);
     dlg.exec();
+    if(wasActive) m_timer->start(1000);
 }
 
-//function that executes the troll dialog
-void MainWindow::trollHelp() {
-    TrollDialog dlg(this);
+//function that executes the items dialog
+void MainWindow::items()
+{
+    bool wasActive = m_timer->isActive();
+    if(wasActive) m_timer->stop();
+    ItemsDialog dlg(m_statsTracker->amountGoldenFlags()["Golden Flags"].toInt(), this);
     dlg.exec();
+    if(wasActive) m_timer->start(1000);
 }
 
 //function that checks, if the round is correctly won
@@ -614,15 +628,15 @@ void MainWindow::checkWin() {
     if ((counter == 10 || counter == 40 || counter == 99) && ui->lcdNumber->value() == 0) {
         m_statsTracker->roundsPlayedUpdate(m_currentMode, true, m_currentRoundPlaytime);
         ui->playWidget->setEnabled(false);
+        m_timer->stop();
         QMessageBox dlg(this);
         dlg.setWindowTitle("Win Screen");
         dlg.setWindowIcon(QIcon(":/ressources/minesweeper_logo.png"));
         dlg.setText("You have won!");
         dlg.setIcon(QMessageBox::Information);
-        dlg.addButton("Reset", QMessageBox::AcceptRole);
         dlg.exec();
-        reset();
     }
+    m_roundEnded = true;
 }
 
 //function that reacts to Start Menu clicked
@@ -634,5 +648,35 @@ void MainWindow::startMenu() {
         m_menuImage->setVisible(false);
         startRound(dlg.getChoice());
     }
+}
 
+//function that starts a round
+void MainWindow::start() {
+    if(!m_started && !m_roundEnded) {
+        m_timer->start(1000);
+        m_started = true;
+    }
+}
+
+//function that gives golden flag
+void MainWindow::obtainGoldenFlag() {
+    m_statsTracker->addGoldenFlag();
+
+    QMessageBox dlg;
+    dlg.setIcon(QMessageBox::Information);
+    dlg.setInformativeText("You gained a golden flag. If used, it can reveal a bomb and its surroundings instantly.");
+    dlg.setWindowIcon(QIcon(":ressources/minesweeper_logo.png"));
+    dlg.setWindowTitle("Secret Item Gained!");
+    dlg.exec();
+}
+
+//function that uses a golden flag
+void MainWindow::useGoldenFlag() {
+    default_random_engine generator;
+    uniform_int_distribution<int> possibleIDs(0, m_mineIDs->size()-1);
+    int id = possibleIDs(generator);
+    ((*m_buttonList)[m_mineIDs->at(id)])->setCustomIcon(CustomPushButton::GOLD);
+    ((*m_buttonList)[m_mineIDs->at(id)])->setEnabled(false);
+    ((*m_buttonList)[m_mineIDs->at(id)])->disableNeighbours();
+    ui->lcdNumber->display(ui->lcdNumber->intValue() - 1);
 }

@@ -20,5 +20,6 @@
         <file>ressources/2lives.png</file>
         <file>ressources/3lives.png</file>
         <file>ressources/rickroll.gif</file>
+        <file>ressources/G.png</file>
     </qresource>
 </RCC>

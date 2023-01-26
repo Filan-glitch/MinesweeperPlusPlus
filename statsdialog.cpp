@@ -1,6 +1,7 @@
 #include "statsdialog.h"
 #include "ui_statsdialog.h"
 #include "mainwindow.h"
+#include "resetdialog.h"
 
 StatsDialog::~StatsDialog()
 {
@@ -94,6 +95,14 @@ StatsDialog::StatsDialog(const QJsonObject &easyStats, const QJsonObject &interm
     ui->confusionHardLosesLabel->setText("Loses: " + QString::number(m_confusionHardStats["Loses"].toInt()));
     ui->confusionHardEfficiencyLabel->setText("Efficiency: " + QString::number(m_confusionHardStats["Efficiency"].toDouble()));
 
-    MainWindow* mainwindow = reinterpret_cast<MainWindow*>(this->parent());
-    connect(ui->pushButtonReset, SIGNAL(clicked()), mainwindow->m_statsTracker, SLOT(resetStats()));
+    connect(ui->pushButtonReset, SIGNAL(clicked()), this, SLOT(reset()));
+}
+
+void StatsDialog::reset() {
+    ResetDialog dlg;
+
+    if(dlg.exec() == QDialog::Accepted) {
+        MainWindow* mainwindow = reinterpret_cast<MainWindow*>(this->parent());
+        mainwindow->m_statsTracker->resetStats(dlg.resetGoldenFlag());
+    }
 }

@@ -18,6 +18,7 @@ public:
     StatsTracker();
     void readStats();
     void writeStats();
+    void resetStats(bool resetGoldenFlags);
 
     QJsonObject easyStats() const;
     QJsonObject intermediateStats() const;
@@ -25,7 +26,10 @@ public:
     QJsonObject confusionEasyStats() const;
     QJsonObject confusionIntermediateStats() const;
     QJsonObject confusionHardStats() const;
+    QJsonObject amountGoldenFlags() const;
     void roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win, int time, float efficiency = 0.0f);
+    void addGoldenFlag();
+    void useGoldenFlag();
 
 private:
     QJsonObject m_easyStats;
@@ -34,9 +38,7 @@ private:
     QJsonObject m_confusionEasyStats;
     QJsonObject m_confusionIntermediateStats;
     QJsonObject m_confusionHardStats;
-
-private slots:
-    void resetStats();
+    QJsonObject m_amountGoldenFlags;
 };
 
 #endif // STATSTRACKER_H

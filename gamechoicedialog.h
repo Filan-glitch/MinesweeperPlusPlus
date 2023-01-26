@@ -20,7 +20,7 @@ public:
 
 private:
     Ui::GameChoiceDialog *ui;
-    Choice m_choice = EASY;
+    Choice m_choice = BEGINNER1;
 
 private slots:
     void easyClicked(bool checked);

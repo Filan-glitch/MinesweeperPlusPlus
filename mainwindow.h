@@ -35,6 +35,7 @@ public:
     GameChoiceDialog::Choice currentMode() const;
     void setCurrentMode(GameChoiceDialog::Choice newCurrentMode);
     StatsTracker* m_statsTracker;
+    void useGoldenFlag();
 
 private:
     Ui::MainWindow *ui;
@@ -48,6 +49,8 @@ private:
     int m_currentRoundPlaytime = 0;
     int m_clicks = 0;
     int m_hearts = 1;
+    bool m_started = false;
+    bool m_roundEnded = false;
 
     void startRound(GameChoiceDialog::Choice choice);
     void newEasyRound(bool confusion, bool beginner);
@@ -57,6 +60,7 @@ private:
     void generateBombs(int rows, int columns, int bombs);
     void changeHearts(int amount, QSize* screenSize);
     void changeHearts(int amount);
+    void obtainGoldenFlag();
 
 private slots:
     void updateTimer();
@@ -64,10 +68,11 @@ private slots:
     void reset();
     void disableClear();
     void about();
+    void items();
     void checkWin();
     void updateStats();
     void showStats();
     void startMenu();
-    void trollHelp();
+    void start();
 };
 #endif // MAINWINDOW_H
