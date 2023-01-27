@@ -54,6 +54,7 @@ private:
     bool m_roundEnded = false;
     int m_3bv = 0;
     int m_goldenFlagsUsed = 0;
+    int m_bombsClicked = 0;
 
     void startRound(GameChoiceDialog::Choice choice);
     void newEasyRound(bool confusion, bool beginner);

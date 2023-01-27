@@ -575,8 +575,12 @@ void MainWindow::bombClicked() {
         m_timer->stop();
         ui->actionShow_Result->setEnabled(false);
         ui->actionItems->setEnabled(false);
+        ui->lcdNumber->display(0);
         m_roundEnded = true;
         if(!m_started) obtainGoldenFlag();
+    } else {
+        m_bombsClicked++;
+        ui->lcdNumber->display(ui->lcdNumber->intValue() - 1);
     }
     m_hearts -= 1;
     changeHearts(m_hearts);
@@ -616,6 +620,7 @@ void MainWindow::reset() {
     m_3bv = 0;
     m_clicks = 0;
     m_goldenFlagsUsed = 0;
+    m_bombsClicked = 0;
 }
 
 //function that floodfills all the clear buttons
@@ -662,12 +667,16 @@ void MainWindow::items()
 void MainWindow::checkWin() {
     if ((m_currentMode == GameChoiceDialog::EASY && m_disabledButtonIDsList->size() == (71 + m_goldenFlagsUsed)) ||
         (m_currentMode == GameChoiceDialog::CONFUSION1 && m_disabledButtonIDsList->size() == (71 + m_goldenFlagsUsed)) ||
-        (m_currentMode == GameChoiceDialog::BEGINNER1 && m_disabledButtonIDsList->size() == (71 + m_goldenFlagsUsed)) ||
+        (m_currentMode == GameChoiceDialog::BEGINNER1 && m_disabledButtonIDsList->size() == (71 + m_goldenFlagsUsed + m_bombsClicked)) ||
             (m_currentMode == GameChoiceDialog::INTERMEDIATE && m_disabledButtonIDsList->size() == (216 + m_goldenFlagsUsed)) ||
             (m_currentMode == GameChoiceDialog::CONFUSION2 && m_disabledButtonIDsList->size() == (216 + m_goldenFlagsUsed)) ||
-            (m_currentMode == GameChoiceDialog::BEGINNER2 && m_disabledButtonIDsList->size() == (216 + m_goldenFlagsUsed)) ||
+            (m_currentMode == GameChoiceDialog::BEGINNER2 && m_disabledButtonIDsList->size() == (216 + m_goldenFlagsUsed + m_bombsClicked)) ||
             (m_currentMode == GameChoiceDialog::HARD && m_disabledButtonIDsList->size() == (381 + m_goldenFlagsUsed)) ||
             (m_currentMode == GameChoiceDialog::CONFUSION3 && m_disabledButtonIDsList->size() == (381 + m_goldenFlagsUsed))) {
+        //setting all left mines to flags
+        for(const auto mineID : qAsConst(*m_mineIDs)) {
+            (*m_buttonList)[mineID]->setCustomIcon(CustomPushButton::FLAG);
+        }
         ui->playWidget->setEnabled(false);
         ui->actionItems->setEnabled(false);
         ui->actionShow_Result->setEnabled(false);
@@ -687,7 +696,7 @@ void MainWindow::checkWin() {
 //function that reacts to Start Menu clicked
 void MainWindow::startMenu() {
     GameChoiceDialog dlg(this);
-    dlg.setFixedSize(this->size()*0.33);
+    dlg.setBaseSize(this->size()*0.33);
     if(dlg.exec() == QDialog::Accepted) {
         ui->menubar->setVisible(true);
         m_menuImage->setVisible(false);
