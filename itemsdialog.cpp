@@ -2,6 +2,7 @@
 #include "ui_itemsdialog.h"
 #include "mainwindow.h"
 
+//constructor
 ItemsDialog::ItemsDialog(int amountGoldenFlags, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ItemsDialog)
@@ -12,11 +13,13 @@ ItemsDialog::ItemsDialog(int amountGoldenFlags, QWidget *parent) :
     connect(ui->pushButtonUseGoldenFlag, SIGNAL(clicked()), this, SLOT(useGoldenFlag()));
 }
 
+//destructor
 ItemsDialog::~ItemsDialog()
 {
     delete ui;
 }
 
+//function that calls the useGoldenFlag function of mainwindow class
 void ItemsDialog::useGoldenFlag() {
     MainWindow* mainwindow = reinterpret_cast<MainWindow*>(this->parent());
     mainwindow->m_statsTracker->useGoldenFlag();

@@ -17,6 +17,8 @@
 #include <QPixmap>
 #include <QVBoxLayout>
 #include <algorithm>
+#include <QDesktopServices>
+#include <QUrl>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -81,5 +83,6 @@ private slots:
     void startMenu();
     void start();
     void addClick();
+    void howToPlay();
 };
 #endif // MAINWINDOW_H

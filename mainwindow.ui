@@ -292,6 +292,8 @@
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionHow_to_play"/>
+    <addaction name="separator"/>
     <addaction name="actionAbout"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
@@ -301,7 +303,7 @@
   </widget>
   <action name="actionAbout">
    <property name="text">
-    <string>About...</string>
+    <string>License...</string>
    </property>
   </action>
   <action name="actionExit">
@@ -327,6 +329,11 @@
   <action name="actionItems">
    <property name="text">
     <string>Items</string>
+   </property>
+  </action>
+  <action name="actionHow_to_play">
+   <property name="text">
+    <string>How to play...</string>
    </property>
   </action>
  </widget>

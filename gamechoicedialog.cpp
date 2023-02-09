@@ -1,6 +1,7 @@
 #include "gamechoicedialog.h"
 #include "ui_gamechoicedialog.h"
 
+//constructor
 GameChoiceDialog::GameChoiceDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::GameChoiceDialog)
@@ -18,52 +19,61 @@ GameChoiceDialog::GameChoiceDialog(QWidget *parent) :
 
 }
 
+//destructor
 GameChoiceDialog::~GameChoiceDialog()
 {
     delete ui;
 }
 
+//getter for the game choice
 GameChoiceDialog::Choice GameChoiceDialog::getChoice() const
 {
     return m_choice;
 }
 
-
+//setter to easy
 void GameChoiceDialog::easyClicked(bool checked)
 {
     m_choice = EASY;
 }
 
+//setter to intermediate
 void GameChoiceDialog::intermediateClicked(bool checked)
 {
     m_choice = INTERMEDIATE;
 }
 
+//setter to hard
 void GameChoiceDialog::hardClicked(bool checked)
 {
     m_choice = HARD;
 }
 
+//setter to confusion easy
 void GameChoiceDialog::confusionEasyClicked(bool checked)
 {
     m_choice = CONFUSION1;
 }
 
+//setter to confusion intermediate
 void GameChoiceDialog::confusionIntermediateClicked(bool checked)
 {
     m_choice = CONFUSION2;
 }
 
+//setter to confusion hard
 void GameChoiceDialog::confusionHardClicked(bool checked)
 {
     m_choice = CONFUSION3;
 }
 
+//setter to beginner easy
 void GameChoiceDialog::beginnerEasyClicked(bool checked)
 {
     m_choice = BEGINNER1;
 }
 
+//setter to beginner intermediate
 void GameChoiceDialog::beginnerIntermediateClicked(bool checked)
 {
     m_choice = BEGINNER2;

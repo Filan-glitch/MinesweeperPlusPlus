@@ -159,7 +159,7 @@ void StatsTracker::roundsPlayedUpdate(GameChoiceDialog::Choice choice, bool win,
         m_easyStats["Total Time"] = m_easyStats["Total Time"].toInt() + time;
         if(win) {
             m_easyStats["Wins"] = m_easyStats["Wins"].toInt() + 1;
-            m_easyStats["Efficiency"] = (m_easyStats["Efficiency"].toDouble() + efficiency) / m_easyStats["Wins"].toInt();
+            if(efficiency != 0) m_easyStats["Efficiency"] = (m_easyStats["Efficiency"].toDouble() + efficiency) / m_easyStats["Wins"].toInt();
 
             if(m_easyStats["Best Time"] == QJsonValue()) {
                 m_easyStats["Best Time"] = time;

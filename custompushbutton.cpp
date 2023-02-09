@@ -1,5 +1,6 @@
 #include "custompushbutton.h"
 
+//constructor
 CustomPushButton::CustomPushButton(QWidget *parent) : QPushButton(parent)
 {
     m_neighbours = new QVector<CustomPushButton*>;
@@ -185,6 +186,7 @@ void CustomPushButton::disableNeighbours()
     }
 }
 
+//function that marks all neighbours
 void CustomPushButton::markNeighbours()
 {
     for(CustomPushButton* neighbour : *m_neighbours) {

@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_timer, SIGNAL(timeout()), this, SLOT(updateTimer()));
     connect(ui->actionReset, SIGNAL(triggered()), this, SLOT(reset()));
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
+    connect(ui->actionHow_to_play, SIGNAL(triggered()), this, SLOT(howToPlay()));
     connect(ui->actionShow_Result, SIGNAL(triggered()), this, SLOT(bombClicked()));
     connect(ui->actionStatistics, SIGNAL(triggered()), this, SLOT(showStats()));
     connect(ui->actionItems, SIGNAL(triggered()), this, SLOT(items()));
@@ -141,7 +142,7 @@ void MainWindow::startRound(GameChoiceDialog::Choice choice) {
 
 }
 
-//slot that gets accessed, when the timer fires to update the timer LED
+//function that gets accessed, when the timer fires to update the timer LED
 void MainWindow::updateTimer() {
    QTime tempTime = m_time->addSecs(1);
    m_currentRoundPlaytime += 1;
@@ -563,7 +564,7 @@ void MainWindow::showStats()
     if(wasActive) m_timer->start(1000);
 }
 
-//slot that gets accessed, when a mine gets clicked
+//function that gets accessed, when a mine gets clicked
 void MainWindow::bombClicked() {
     if(m_hearts == 1) {
         m_statsTracker->roundsPlayedUpdate(m_currentMode, false, m_currentRoundPlaytime);
@@ -586,7 +587,7 @@ void MainWindow::bombClicked() {
     changeHearts(m_hearts);
 }
 
-//slot that gets accessed, when the reset button is clicked
+//funtion that gets accessed, when the reset button is clicked
 void MainWindow::reset() {
     //Alle Buttons resetten
     for(int i = 0; i < m_buttonList->size(); i++) {
@@ -681,13 +682,20 @@ void MainWindow::checkWin() {
         ui->actionItems->setEnabled(false);
         ui->actionShow_Result->setEnabled(false);
         m_timer->stop();
-        double efficiency = calculateEfficiency();
+
         QMessageBox dlg(this);
         dlg.setWindowTitle("Win Screen");
         dlg.setWindowIcon(QIcon(":/ressources/minesweeper_logo.png"));
-        dlg.setText("You have won!\n3BV was: " + QString::number(m_3bv) + "\nYou needed: " + QString::number(m_clicks) + "\nEfficiency: " + QString::number(efficiency));
-        m_statsTracker->roundsPlayedUpdate(m_currentMode, true, m_currentRoundPlaytime, efficiency);
         dlg.setIcon(QMessageBox::Information);
+
+        if(m_goldenFlagsUsed == 0) {
+            double efficiency = calculateEfficiency();
+            dlg.setText("You have won!\n\n3BV was: " + QString::number(m_3bv) + "\nYou needed: " + QString::number(m_clicks) + "\nEfficiency: " + QString::asprintf("%.2lf\%", efficiency * 100));
+            m_statsTracker->roundsPlayedUpdate(m_currentMode, true, m_currentRoundPlaytime, efficiency);
+        } else {
+            dlg.setText("You have won!\n\n3BV was: " + QString::number(m_3bv) + "\nEfficiency not calculated, because you used a golden flag.");
+            m_statsTracker->roundsPlayedUpdate(m_currentMode, true, m_currentRoundPlaytime);
+        }
         dlg.exec();
         m_roundEnded = true;
     }
@@ -738,6 +746,14 @@ void MainWindow::useGoldenFlag() {
     ((*m_buttonList)[m_mineIDs->at(id)])->disableNeighbours();
     ui->lcdNumber->display(ui->lcdNumber->intValue() - 1);
     m_goldenFlagsUsed++;
+
+    //Adding all new disabled buttons
+    for(int i = 0; i < m_buttonList->size(); i++) {
+        CustomPushButton* button = (*m_buttonList)[i];
+        if(!button->isEnabled()) {
+            m_disabledButtonIDsList->insert(i);
+        }
+    }
 }
 
 //function that adds a click
@@ -771,4 +787,9 @@ double MainWindow::calculateEfficiency() {
     default:
         return 0;
     }
+}
+
+//function that opens a website with minesweeper instructions
+void MainWindow::howToPlay() {
+    QDesktopServices::openUrl(QUrl("https://minesweepergame.com/strategy/how-to-play-minesweeper.php"));
 }
